@@ -9,43 +9,11 @@
  
   <script src="video.js"></script>
 
-  <!-- Unless using the CDN hosted version, update the URL to the Flash SWF -->
-
-  <script>
-     
-    function loadOverlay (){
-
-   var myPlayer = videojs('example_video_1');
-   var showing = false;
-   var playing = function(){
-   var myPlayer= this;
-   var whereYouAt = myPlayer.currentTime();
-      if(whereYouAt >3 && whereYouAt < 10 && showing == false){
-   document.getElementById("overlay").innerHTML="<marquee>This will play from 3s to 10s</marquee>";
-   showing = true;
-   }
- if(whereYouAt > 10 && showing == true){
-   document.getElementById("overlay").innerHTML="<marquee></marquee>";
-   showing = false;
-   }
-   }
-   
-   myPlayer.on("timeupdate",playing);
-      
-   }
-  var overlay= document.getElementById('overlay');
-  var video= document.getElementById('v');
- 
-    videojs.options.flash.swf = "video-js.swf";
-            
-  </script>
-
-
-
 
 </head>
-<body onload="loadOverlay()">
-                                              
+<body onload="loadOverlay()">  
+     
+                        
   <video id="example_video_1" class="video-js vjs-default-skin" controls preload="none" width="640" height="264"
       poster="http://video-js.zencoder.com/oceans-clip.png"
       data-setup="{}">
@@ -64,10 +32,109 @@
 
 <form id="send-message-area" method="POST" action="sendchat.php">
             <input type="text" name="when" id="when" value="" hidden />
-    <textarea name="msg" id="txtBox"><?php echo "default value" ?></textarea>
+    <textarea name="msg" id="txtBox"></textarea>
                 <input type="submit" />
 </form>
 
 
 </body>
+<?php
+
+// Define database related constants
+define('DB_HOSTNAME', '127.0.0.1');
+define('DB_USERNAME', 'wampuser');
+define('DB_PASSWORD', 'xxxx');
+define('DB_DATABASE', 'danmaku');
+define('DB_PORT',     8889);
+
+
+// Connect to the MySQL server and set the default database
+$mysqli = new mysqli(DB_HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_DATABASE, DB_PORT);
+!$mysqli->connect_errno
+      or die("Error: Failed to CONNECT: ({$mysqli->connect_errno}) {$mysqli->connect_error}");
+echo 'INFO: Connected to MySQL at ' . DB_HOSTNAME . ':' . DB_PORT . '/' . DB_DATABASE . ' (' . DB_USERNAME . ')<br />'; //connected to database
+
+$ID_video = 'im3080';	//database name
+
+
+$mysqli->real_query('SELECT video_time, content, sending_date, sending_time, like_num, dislike_num FROM '.$ID_video .' ORDER BY video_time ASC')
+      or die("Error: SELECT failed: ({$mysqli->errno}) {$mysqli->error}");
+
+$resultSet = $mysqli->store_result()
+      or die("Error: Store resultset failed: ({$mysqli->errno}) {$mysqli->error}");
+tabulate_resultset($resultSet);
+$resultSet->close();  // Close the result set
+
+function tabulate_resultset($resultSet) {
+	echo '<table border=1><tr>';
+	// Get fields' name and print table header row
+	echo "<th>Time</th>";
+	echo "<th width=70% >Comment</th>";
+	echo "<th>Published on</th>";
+	//echo "<th>Like</th>";
+	//echo "<th>Dislike</th>";
+	echo '</tr>';
+
+	// Fetch each row and print table detail row
+	foreach ($resultSet as $row) {  // Loop thru all rows in resultset
+		echo '<tr>';
+        $time = $row['video_time'];
+        $second = $time%60;
+        $time = (int)($time/60);
+        $minute = $time%60;
+        $time = (int)($time/60);
+        printf('<td>%02d:%02d:%02d</td>',$time,$minute,$second);
+        global $comment;
+        $comment = $row['content'];
+		
+        echo"<td>",$comment,"</td>";
+
+        $date = intval($row['sending_date']);
+        $day = $date%100;
+        $date = (int)($date/100);
+        $month = $date%100;
+        $date = (int)($date/100);
+        printf('<td>%02d/%02d/%4d  ',$day,$month,$date);
+        echo $row['sending_time'],"</td>";
+      // echo"<td>",$row['like_num'],"</td>";
+      //  echo"<td>",$row['dislike_num'],"</td>";
+        echo '</tr>';
+    }
+    echo '</table>';
+}
+echo $comment;
+?>
+
+
+
+  <script>
+     
+    function loadOverlay (){
+		alert('<?php echo($comment); ?>');
+   var myPlayer = videojs('example_video_1');
+   var showing = false;
+   var playing = function(){
+   var myPlayer= this;
+   var whereYouAt = myPlayer.currentTime();
+      if(whereYouAt >3 && whereYouAt < 10 && showing == false){
+   document.getElementById("overlay").innerHTML="<marquee><?php echo($comment); ?></marquee>";
+   showing = true;
+   }
+ if(whereYouAt > 10 && showing == true){
+   document.getElementById("overlay").innerHTML="<marquee></marquee>";
+   showing = false;
+   }
+   }
+   
+   myPlayer.on("timeupdate",playing);
+      
+   }
+  var overlay= document.getElementById('overlay');
+  var video= document.getElementById('v');
+ 
+    videojs.options.flash.swf = "video-js.swf";
+            
+  </script>
 </html>
+
+
