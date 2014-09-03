@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html>
 <head>
   <title>Video.js | HTML5 Video Player</title>
@@ -46,6 +47,11 @@ Left:
 
 </body>
 <?php
+include '/Applications/MAMP/htdocs/ChromePhp.php';
+//ChromePhp::log('Hello console!');
+//ChromePhp::log($_SERVER);
+//ChromePhp::warn('something went wrong!');
+
 
 // Define database related constants
 define('DB_HOSTNAME', '127.0.0.1');
@@ -72,6 +78,11 @@ $resultSet = $mysqli->store_result()
 tabulate_resultset($resultSet);
 $resultSet->close();  // Close the result set
 
+
+$currentArray = 0;	//counter for current displayed array on video
+$comment;
+$playTime;
+
 function tabulate_resultset($resultSet) {
   echo '<table border=1><tr>';
   // Get fields' name and print table header row
@@ -81,13 +92,18 @@ function tabulate_resultset($resultSet) {
   //echo "<th>Like</th>";
   //echo "<th>Dislike</th>";
   echo '</tr>';
-
+  
+global $temp;
+$temp = array();
+$counter = 0;
   // Fetch each row and print table detail row
   foreach ($resultSet as $row) {  // Loop thru all rows in resultset
     echo '<tr>';
-      global $comment;
-        global $playTime;
+  
         $time = $row['video_time'];
+        $temp[$counter][0] = $time;
+        //echo ("<script>console.log(\"$temp[$counter][0]\");</script>");
+        //echo $temp[counter][0]," --VT";
         $playTime = $time;
         $second = $time%60;
         $time = (int)($time/60);
@@ -95,10 +111,11 @@ function tabulate_resultset($resultSet) {
         $time = (int)($time/60);
         printf('<td>%02d:%02d:%02d</td>',$time,$minute,$second);
         
+        
         $comment = $row['content'];
-    
-        echo"<td>",$comment,"</td>";
-
+		$temp[$counter][1] = $comment;
+		//echo ("<script>console.log(\"$temp[$counter][1]\");</script>");
+        echo"<td>",$comment,"</td>";		
         $date = intval($row['sending_date']);
         $day = $date%100;
         $date = (int)($date/100);
@@ -109,9 +126,11 @@ function tabulate_resultset($resultSet) {
       // echo"<td>",$row['like_num'],"</td>";
       //  echo"<td>",$row['dislike_num'],"</td>";
         echo '</tr>';
+        $counter ++;
     }
     echo '</table>';
 }
+
 
 if (!empty($_POST["comment"])){
   $pStmt = $mysqli->prepare("INSERT INTO ".$ID_video ." (ID_num, content, video_time, sending_date, sending_time, like_num, dislike_num) VALUES (?, ?, ?, ?, ?, ?, ?)")
@@ -130,34 +149,34 @@ if (!empty($_POST["comment"])){
   echo "INFO: {$pStmt->affected_rows} row(s) inserted<br />";
 }
 
-
-?>
+			$playTime = $temp[$currentArray][0];
+			$comment = $temp[$currentArray][1];
+			?>
 
 
   <script>
 
+	var arr = <?php echo json_encode($temp); ?>;
      var whereYouAt; //global var
+     var count = 0;
     function loadOverlay (){
-    //alert('<?php echo($playTime); ?>');
-    //console.log('<?php echo($playTime); ?>');
-    //console.log('<?php echo($comment); ?>');
-    
+      
+   
    var myPlayer = videojs('example_video_1');
    var showing = false;
    var playing = function(){
    var myPlayer= this;
    whereYouAt = myPlayer.currentTime();
-   console.log(showing);
-   if(whereYouAt > <?php echo($playTime); ?> && showing == false){ // check current playing time with DB comment playTime. showing == true(run this only once)
-    //alert('<?php echo($playTime); ?>');
-    document.getElementById("overlay").innerHTML="<marquee><?php echo($comment); ?></marquee>";   
-    showing = true;
+
+   if(whereYouAt > arr[count][0] && showing == false){ // check current playing time with DB comment playTime. showing == true(run this only once)
+	  document.getElementById("overlay").innerHTML="<marquee>"+arr[count][1]+"</marquee>";
+	  count ++;
+	  }
+   showing = false;
+    
    }
-   
-   }
-   
-   myPlayer.on("timeupdate",playing); // as long as time is updating, will run function "playing" 
-      
+   myPlayer.on("timeupdate",playing); // as long as time is updating, will run function "playing"
+  
    }
   //var overlay= document.getElementById('overlay');
   //var video= document.getElementById('v');
