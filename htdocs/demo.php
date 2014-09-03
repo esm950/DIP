@@ -28,15 +28,16 @@
    <marquee></marquee>
 
 </div>
-<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>" method="post" onSubmit="return datacheck();">
+<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>" method="post" onSubmit="setVideoTime()">
 Comment: <br><textarea type="text" name="comment" placeholder="Maximum 200 words..." rows="3" cols="40" wrap=PHYSICAL onKeyDown="gbcount(this.form.comment,this.form.total,this.form.used,this.form.remain);" onKeyUp="gbcount(this.form.comment,this.form.total,this.form.used,this.form.remain);"></textarea>
+<input type="hidden" value="" name="videoTime" id="VT">
 <input type="submit" value="Submit">
 
 <p>Max words:
 <input disabled maxLength="4" name="total" size="3" value="200" >
-Written：
+Written:
 <input disabled maxLength="4" name="used" size="3" value="0" >
-Left：
+Left:
 <input disabled maxLength="4" name="remain" size="3" value="200" >
 </p>
 </form>
@@ -117,7 +118,7 @@ if (!empty($_POST["comment"])){
         or die("Error: create prepared failed: ({$mysqli->errno}) {$mysqli->error}");
   $ID_num = 1200;
   $content = $_POST["comment"];
-  $video_time = 327;
+  $video_time = $_POST['videoTime'];
   date_default_timezone_set('Asia/Singapore');
   $sending_date = date('Ymd');
   $sending_time = date('H:i:s');
@@ -133,42 +134,41 @@ if (!empty($_POST["comment"])){
 ?>
 
 
-
   <script>
 
-     
+     var whereYouAt; //global var
     function loadOverlay (){
     //alert('<?php echo($playTime); ?>');
-    console.log('<?php echo($playTime); ?>');
-    console.log('<?php echo($comment); ?>');
+    //console.log('<?php echo($playTime); ?>');
+    //console.log('<?php echo($comment); ?>');
     
    var myPlayer = videojs('example_video_1');
    var showing = false;
    var playing = function(){
    var myPlayer= this;
-   var whereYouAt = myPlayer.currentTime();
-   if(whereYouAt > <?php echo($playTime); ?> && showing == false){
-     alert('<?php echo($playTime); ?>');
-     showing == true;
-   }
-      if(whereYouAt >3 && whereYouAt < 10 && showing == false){
-   document.getElementById("overlay").innerHTML="<marquee><?php echo($comment); ?></marquee>";
-   showing = true;
-   }
- if(whereYouAt > 10 && showing == true){
-   document.getElementById("overlay").innerHTML="<marquee></marquee>";
-   showing = false;
-   }
+   whereYouAt = myPlayer.currentTime();
+   console.log(showing);
+   if(whereYouAt > <?php echo($playTime); ?> && showing == false){ // check current playing time with DB comment playTime. showing == true(run this only once)
+    //alert('<?php echo($playTime); ?>');
+    document.getElementById("overlay").innerHTML="<marquee><?php echo($comment); ?></marquee>";   
+    showing = true;
    }
    
-   myPlayer.on("timeupdate",playing);
+   }
+   
+   myPlayer.on("timeupdate",playing); // as long as time is updating, will run function "playing" 
       
    }
-  var overlay= document.getElementById('overlay');
-  var video= document.getElementById('v');
+  //var overlay= document.getElementById('overlay');
+  //var video= document.getElementById('v');
  
     videojs.options.flash.swf = "video-js.swf";
             
+            function setVideoTime (){
+document.getElementById("VT").value = Math.floor(whereYouAt);
+//alert(document.getElementById("VT").value);
+
+}
   </script>
 </html>
 
