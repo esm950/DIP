@@ -12,7 +12,6 @@
 
 </head>
 <body onload="loadOverlay()">  
-     
                         
   <video id="example_video_1" class="video-js vjs-default-skin" controls preload="none" width="640" height="264"
       poster="http://video-js.zencoder.com/oceans-clip.png"
@@ -29,12 +28,19 @@
    <marquee></marquee>
 
 </div>
+<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>" method="post" onSubmit="return datacheck();">
+Comment: <br><textarea type="text" name="comment" placeholder="Maximum 200 words..." rows="3" cols="40" wrap=PHYSICAL onKeyDown="gbcount(this.form.comment,this.form.total,this.form.used,this.form.remain);" onKeyUp="gbcount(this.form.comment,this.form.total,this.form.used,this.form.remain);"></textarea>
+<input type="submit" value="Submit">
 
-<form id="send-message-area" method="POST" action="sendchat.php">
-            <input type="text" name="when" id="when" value="" hidden />
-    <textarea name="msg" id="txtBox"></textarea>
-                <input type="submit" />
+<p>Max words:
+<input disabled maxLength="4" name="total" size="3" value="200" >
+Written：
+<input disabled maxLength="4" name="used" size="3" value="0" >
+Left：
+<input disabled maxLength="4" name="remain" size="3" value="200" >
+</p>
 </form>
+
 
 
 </body>
@@ -54,7 +60,7 @@ $mysqli = new mysqli(DB_HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_DATABASE, DB_PORT
       or die("Error: Failed to CONNECT: ({$mysqli->connect_errno}) {$mysqli->connect_error}");
 echo 'INFO: Connected to MySQL at ' . DB_HOSTNAME . ':' . DB_PORT . '/' . DB_DATABASE . ' (' . DB_USERNAME . ')<br />'; //connected to database
 
-$ID_video = 'im3080';	//database name
+$ID_video = 'im3080'; //database name
 
 
 $mysqli->real_query('SELECT video_time, content, sending_date, sending_time, like_num, dislike_num FROM '.$ID_video .' ORDER BY video_time ASC')
@@ -66,27 +72,30 @@ tabulate_resultset($resultSet);
 $resultSet->close();  // Close the result set
 
 function tabulate_resultset($resultSet) {
-	echo '<table border=1><tr>';
-	// Get fields' name and print table header row
-	echo "<th>Time</th>";
-	echo "<th width=70% >Comment</th>";
-	echo "<th>Published on</th>";
-	//echo "<th>Like</th>";
-	//echo "<th>Dislike</th>";
-	echo '</tr>';
+  echo '<table border=1><tr>';
+  // Get fields' name and print table header row
+  echo "<th>Time</th>";
+  echo "<th width=70% >Comment</th>";
+  echo "<th>Published on</th>";
+  //echo "<th>Like</th>";
+  //echo "<th>Dislike</th>";
+  echo '</tr>';
 
-	// Fetch each row and print table detail row
-	foreach ($resultSet as $row) {  // Loop thru all rows in resultset
-		echo '<tr>';
+  // Fetch each row and print table detail row
+  foreach ($resultSet as $row) {  // Loop thru all rows in resultset
+    echo '<tr>';
+      global $comment;
+        global $playTime;
         $time = $row['video_time'];
+        $playTime = $time;
         $second = $time%60;
         $time = (int)($time/60);
         $minute = $time%60;
         $time = (int)($time/60);
         printf('<td>%02d:%02d:%02d</td>',$time,$minute,$second);
-        global $comment;
+        
         $comment = $row['content'];
-		
+    
         echo"<td>",$comment,"</td>";
 
         $date = intval($row['sending_date']);
@@ -102,20 +111,46 @@ function tabulate_resultset($resultSet) {
     }
     echo '</table>';
 }
-echo $comment;
+
+if (!empty($_POST["comment"])){
+  $pStmt = $mysqli->prepare("INSERT INTO ".$ID_video ." (ID_num, content, video_time, sending_date, sending_time, like_num, dislike_num) VALUES (?, ?, ?, ?, ?, ?, ?)")
+        or die("Error: create prepared failed: ({$mysqli->errno}) {$mysqli->error}");
+  $ID_num = 1200;
+  $content = $_POST["comment"];
+  $video_time = 327;
+  date_default_timezone_set('Asia/Singapore');
+  $sending_date = date('Ymd');
+  $sending_time = date('H:i:s');
+  $like_num = 0;
+  $dislike_num = 0;
+  $pStmt->bind_param('isissii', $ID_num, $content, $video_time, $sending_date, $sending_time, $like_num, $dislike_num)
+          and $pStmt->execute()
+          or die("Error: run prepared failed: ({$pStmt->errno}) {$pStmt->error}");
+  echo "INFO: {$pStmt->affected_rows} row(s) inserted<br />";
+}
+
+
 ?>
 
 
 
   <script>
+
      
     function loadOverlay (){
-		alert('<?php echo($comment); ?>');
+    //alert('<?php echo($playTime); ?>');
+    console.log('<?php echo($playTime); ?>');
+    console.log('<?php echo($comment); ?>');
+    
    var myPlayer = videojs('example_video_1');
    var showing = false;
    var playing = function(){
    var myPlayer= this;
    var whereYouAt = myPlayer.currentTime();
+   if(whereYouAt > <?php echo($playTime); ?> && showing == false){
+     alert('<?php echo($playTime); ?>');
+     showing == true;
+   }
       if(whereYouAt >3 && whereYouAt < 10 && showing == false){
    document.getElementById("overlay").innerHTML="<marquee><?php echo($comment); ?></marquee>";
    showing = true;
