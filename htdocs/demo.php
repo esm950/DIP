@@ -123,7 +123,7 @@ $counter = 0;
         echo '</tr>';
         $counter ++;
     }
-    echo '</table>';
+
 }
 
 
@@ -141,6 +141,41 @@ if (!empty($_POST["comment"])){
   $pStmt->bind_param('isissii', $ID_num, $content, $video_time, $sending_date, $sending_time, $like_num, $dislike_num)
           and $pStmt->execute()
           or die("Error: run prepared failed: ({$pStmt->errno}) {$pStmt->error}");
+		  
+  $mysqli->real_query('SELECT video_time, content, sending_date, sending_time, like_num, dislike_num FROM '.$ID_video .' ORDER BY comment_ID DESC LIMIT 1')
+      or die("Error: SELECT failed: ({$mysqli->errno}) {$mysqli->error}");
+  $resultSet = $mysqli->store_result()
+      or die("Error: Store resultset failed: ({$mysqli->errno}) {$mysqli->error}");
+
+    foreach ($resultSet as $row) {  // Loop thru all rows in resultset; Adds latest entry 
+    echo '<tr>';
+
+        $time = $row['video_time'];
+
+        $playTime = $time;
+        $second = $time%60;
+        $time = (int)($time/60);
+        $minute = $time%60;
+        $time = (int)($time/60);
+        printf('<td>%02d:%02d:%02d</td>',$time,$minute,$second);
+        
+        $comment = $row['content'];
+
+        echo"<td>",$comment,"</td>";		
+        $date = intval($row['sending_date']);
+        $day = $date%100;
+        $date = (int)($date/100);
+        $month = $date%100;
+        $date = (int)($date/100);
+        printf('<td>%02d/%02d/%4d  ',$day,$month,$date);
+        echo $row['sending_time'],"</td>";
+
+        echo '</tr>';
+    }
+  $resultSet->close();  // Close the result set
+  echo '</table><br>';
+  
+  
   echo "INFO: {$pStmt->affected_rows} row(s) inserted<br />";
 }
 
