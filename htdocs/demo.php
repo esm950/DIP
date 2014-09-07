@@ -47,11 +47,6 @@ Left:
 
 </body>
 <?php
-include '/Applications/MAMP/htdocs/ChromePhp.php';
-//ChromePhp::log('Hello console!');
-//ChromePhp::log($_SERVER);
-//ChromePhp::warn('something went wrong!');
-
 
 // Define database related constants
 define('DB_HOSTNAME', '127.0.0.1');
