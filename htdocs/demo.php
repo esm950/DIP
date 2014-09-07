@@ -53,7 +53,7 @@ define('DB_HOSTNAME', '127.0.0.1');
 define('DB_USERNAME', 'wampuser');
 define('DB_PASSWORD', 'xxxx');
 define('DB_DATABASE', 'danmaku');
-define('DB_PORT',     8889);
+define('DB_PORT',     3306);
 
 
 // Connect to the MySQL server and set the default database
