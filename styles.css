@@ -1,0 +1,110 @@
+body {
+background: url(http://www.thoinayweb.com/wp-content/uploads/2013/12/powerpoint-background.jpg) ;
+} 
+
+.logout {
+    position: absolute;
+    right: 7px;
+	top: 48px;
+}
+
+h1 {
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	font-size:25px;
+	font-weight:bold;
+	margin:0;
+	padding:0;
+	}
+
+hr {
+	border:none;
+	border-top:1px solid #CCCCCC;
+	height:1px;
+	margin-bottom:25px;
+	}
+
+#stylefour{
+	position:relative;
+	display:block;
+	height:39px;
+	font-size:16px;
+	font-weight:bold;
+	background:transparent url(bgOFF.gif) repeat-x top left;
+	font-family:Arial,Verdana,Helvitica,sans-serif;
+	border-top:4px solid #B30000;
+	}
+
+#stylefour ul{
+	margin:0;
+	padding:0;
+	list-style-type:none;
+	width:auto;
+	}
+
+#stylefour ul li{
+	display:block;
+	float:left;
+	margin:0;
+	}
+
+#stylefour ul li a{
+	display:block;
+	float:left;
+	color:#666;
+	text-decoration:none;
+	padding:11px 20px 0 20px;
+	height:23px;
+	background:transparent url(bgDIVIDER.gif) no-repeat top right;
+	}
+
+#stylefour ul li a:hover,#stylefour ul li a.current{
+	color:#B30000;
+	background:#fff url(bgON.gif) no-repeat top right;
+	}
+	
+#Courses {
+	margin: auto;
+    width: 70%;
+    background: url(https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQd5i8ZrxdaxcziRhJ3gK-IxWHdALyrzdVjEYyGvvMatTx_LjqQ) ;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+    padding: 25px;
+    border: 2px solid maroon;
+	font-family:Arial,Verdana,Helvitica,sans-serif;
+	color: maroon; 
+}
+
+/* unvisited link */
+a:link {
+    color: #FF0000;
+}
+
+/* visited link */
+a:visited {
+    color: #FFFFFF;
+}
+
+/* mouse over link */
+a:hover {
+    color: #D8D8D8;
+}
+
+/* selected link */
+a:active {
+    color: #D8D8D8;
+}
+
+
+.Italic
+{
+font-family:Arial,Verdana,Helvitica,sans-serif;
+   font-style: italic;
+   }
+   
+.bold
+{
+font-size:26px;
+font-family:Arial,Verdana,Helvitica,sans-serif;
+}
