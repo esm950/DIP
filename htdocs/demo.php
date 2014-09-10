@@ -29,6 +29,7 @@
    <marquee></marquee>
 
 </div>
+<input type="button" value="Stop Marquee" onClick="document.getElementById('marquee1').stop();">
 <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>" method="post" onSubmit="setVideoTime()">
 Comment: <br><textarea type="text" name="comment" placeholder="Maximum 200 words..." rows="3" cols="40" wrap=PHYSICAL onKeyDown="gbcount(this.form.comment,this.form.total,this.form.used,this.form.remain);" onKeyUp="gbcount(this.form.comment,this.form.total,this.form.used,this.form.remain);"></textarea>
 <input type="hidden" value="" name="videoTime" id="VT">
@@ -47,13 +48,18 @@ Left:
 
 </body>
 <?php
+include '/Applications/MAMP/htdocs/ChromePhp.php';
+//ChromePhp::log('Hello console!');
+//ChromePhp::log($_SERVER);
+//ChromePhp::warn('something went wrong!');
+
 
 // Define database related constants
 define('DB_HOSTNAME', '127.0.0.1');
 define('DB_USERNAME', 'wampuser');
 define('DB_PASSWORD', 'xxxx');
 define('DB_DATABASE', 'danmaku');
-define('DB_PORT',     3306);
+define('DB_PORT',     8889);
 
 
 // Connect to the MySQL server and set the default database
@@ -118,12 +124,12 @@ $counter = 0;
         $date = (int)($date/100);
         printf('<td>%02d/%02d/%4d  ',$day,$month,$date);
         echo $row['sending_time'],"</td>";
-      // echo"<td>",$row['like_num'],"</td>";
-      //  echo"<td>",$row['dislike_num'],"</td>";
+      echo"<td>",$row['like_num'],"</td>";
+      echo"<td>",$row['dislike_num'],"</td>";
         echo '</tr>';
         $counter ++;
     }
-
+    echo '</table>';
 }
 
 
@@ -141,41 +147,6 @@ if (!empty($_POST["comment"])){
   $pStmt->bind_param('isissii', $ID_num, $content, $video_time, $sending_date, $sending_time, $like_num, $dislike_num)
           and $pStmt->execute()
           or die("Error: run prepared failed: ({$pStmt->errno}) {$pStmt->error}");
-		  
-  $mysqli->real_query('SELECT video_time, content, sending_date, sending_time, like_num, dislike_num FROM '.$ID_video .' ORDER BY comment_ID DESC LIMIT 1')
-      or die("Error: SELECT failed: ({$mysqli->errno}) {$mysqli->error}");
-  $resultSet = $mysqli->store_result()
-      or die("Error: Store resultset failed: ({$mysqli->errno}) {$mysqli->error}");
-
-    foreach ($resultSet as $row) {  // Loop thru all rows in resultset; Adds latest entry 
-    echo '<tr>';
-
-        $time = $row['video_time'];
-
-        $playTime = $time;
-        $second = $time%60;
-        $time = (int)($time/60);
-        $minute = $time%60;
-        $time = (int)($time/60);
-        printf('<td>%02d:%02d:%02d</td>',$time,$minute,$second);
-        
-        $comment = $row['content'];
-
-        echo"<td>",$comment,"</td>";		
-        $date = intval($row['sending_date']);
-        $day = $date%100;
-        $date = (int)($date/100);
-        $month = $date%100;
-        $date = (int)($date/100);
-        printf('<td>%02d/%02d/%4d  ',$day,$month,$date);
-        echo $row['sending_time'],"</td>";
-
-        echo '</tr>';
-    }
-  $resultSet->close();  // Close the result set
-  echo '</table><br>';
-  
-  
   echo "INFO: {$pStmt->affected_rows} row(s) inserted<br />";
 }
 
@@ -199,25 +170,35 @@ if (!empty($_POST["comment"])){
    whereYouAt = myPlayer.currentTime();
 
    if(whereYouAt > arr[count][0] && showing == false){ // check current playing time with DB comment playTime. showing == true(run this only once)
-	  document.getElementById("overlay").innerHTML="<marquee>"+arr[count][1]+"</marquee>";
+	  document.getElementById("overlay").innerHTML="<marquee behavior=\"scroll\" direction=\"left\" id=\"marquee1\">"+arr[count][1]+"</marquee>";
+
 	  count ++;
 	  }
    showing = false;
     
    }
    myPlayer.on("timeupdate",playing); // as long as time is updating, will run function "playing"
-  
+  myPlayer.on("pause",stopComment);
+  myPlayer.on("play",startComment);
    }
+   
+   
   //var overlay= document.getElementById('overlay');
   //var video= document.getElementById('v');
  
     videojs.options.flash.swf = "video-js.swf";
             
-            function setVideoTime (){
+function setVideoTime (){
 document.getElementById("VT").value = Math.floor(whereYouAt);
-//alert(document.getElementById("VT").value);
-
 }
+
+function stopComment(){
+	document.getElementById('marquee1').stop();
+}
+function startComment(){
+	document.getElementById('marquee1').start();
+}
+
   </script>
 </html>
 
