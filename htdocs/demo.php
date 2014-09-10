@@ -169,7 +169,7 @@ if (!empty($_POST["comment"])){
    var myPlayer= this;
    whereYouAt = myPlayer.currentTime();
 
-   if(whereYouAt > arr[count][0] && showing == false){ // check current playing time with DB comment playTime. showing == true(run this only once)
+   if(whereYouAt > arr[count][0] && showing == false && whereYouAt < arr[count][0]+0.5){ // check current playing time with DB comment playTime. showing == true(run this only once)
 	  document.getElementById("overlay").innerHTML="<marquee behavior=\"scroll\" direction=\"left\" id=\"marquee1\">"+arr[count][1]+"</marquee>";
 
 	  count ++;
@@ -177,9 +177,12 @@ if (!empty($_POST["comment"])){
    showing = false;
     
    }
-   myPlayer.on("timeupdate",playing); // as long as time is updating, will run function "playing"
+  
+  myPlayer.on("timeupdate",playing); // as long as time is updating, will run function "playing"
+  myPlayer.on("seeked",refreshTime);
   myPlayer.on("pause",stopComment);
   myPlayer.on("play",startComment);
+
    }
    
    
@@ -197,6 +200,11 @@ function stopComment(){
 }
 function startComment(){
 	document.getElementById('marquee1').start();
+}
+function refreshTime(){
+	document.getElementById("overlay").innerHTML="";
+	count=0;
+	
 }
 
   </script>
