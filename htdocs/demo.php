@@ -26,8 +26,6 @@
     <p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading to a web browser that <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a></p>
   </video>
    <div id="overlay">
-   <marquee></marquee>
-
 </div>
 <input type="button" value="Stop Marquee" onClick="document.getElementById('marquee1').stop();">
 <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>" method="post" onSubmit="setVideoTime()">
@@ -202,9 +200,13 @@ function startComment(){
 	document.getElementById('marquee1').start();
 }
 function refreshTime(){
-	document.getElementById("overlay").innerHTML="";
-	count=0;
+	count = 0;
+	document.getElementById("overlay").innerHTML=""; // clear current comment
+	 while(whereYouAt > arr[count][0] && whereYouAt < arr[count][0]+0.5){
+	  count ++;
 	
+}
+
 }
 
   </script>
