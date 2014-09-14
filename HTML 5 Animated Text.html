@@ -1,0 +1,56 @@
+    <html>
+       <head>
+       <title>HTML 5 Animated Text</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+        <script type="text/javascript">
+            var context;
+            var text = "";
+            var textDirection ="";
+
+            $(function()
+            {
+                context = document.getElementById("cvs").getContext("2d");            
+                setInterval("animate()", 30);
+        
+                textDirection ="left";
+                textXpos = 5;
+                text = "Animation!";    
+            });  
+        
+            function animate() {            
+                // Clear screen
+                context.clearRect(0, 0, 500, 500);
+                context.globalAlpha = 1;
+                context.fillStyle = '#fff';
+                context.fillRect(0, 0, 500, 500);    
+                                        
+                var metrics = context.measureText(text);
+                var textWidth = metrics.width;
+                
+                if (textDirection == "left") {
+                    textXpos += 2;
+
+                    if (textXpos > 500 - textWidth) {
+                        textXpos = 5;
+                        textDirection = "left";
+                    }
+                    else {
+                        textXpos += 2;
+                    }
+                }
+
+                context.font = '20px _sans';
+                context.fillStyle = '#FF0000';
+                context.textBaseline = 'top';
+                context.fillText  ( text, textXpos, 180);    
+              }    
+              </script>
+          </head>
+          <body> 
+             <div id="page">
+                <canvas id="cvs" width="500" height="500">
+                   Your browser does not support the HTML 5 Canvas. 
+                </canvas>
+             </div>
+          </body>
+       </html>
