@@ -202,6 +202,8 @@ if (!empty($_POST["comment"])){
             step = 640;						//width of canvas
             steps = 0;
             displayComment(can.height/2, "20pt Verdana","white",1);
+            displayComment(can.height/2, "20pt Verdana","white",2);
+            displayComment(can.height/2, "20pt Verdana","white",3);
 	//html canvas init() end
    }
     videojs.options.flash.swf = "video-js.swf";
