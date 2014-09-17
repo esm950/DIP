@@ -3,6 +3,11 @@
 <html>
 <head>
   <title>Video.js | HTML5 Video Player</title>
+  <style>
+        canvas{border: 1px solid #bbb;}
+        .subdiv{width: 320px;}
+        .text{margin: auto; width: 320px;}
+  </style>
 
   <!-- Chang URLs to wherever Video.js files will be hosted -->
   <link href="video-js.css" rel="stylesheet" type="text/css">
@@ -13,8 +18,11 @@
 
 </head>
 <body onload="loadOverlay()">  
-                        
-  <video id="example_video_1" class="video-js vjs-default-skin" controls preload="none" width="640" height="264"
+<div id="overlay">
+   <canvas id="MyCanvas1" width="640" height="120">
+	This browser or document mode doesn't support canvas object</canvas>
+</div>
+ <video id="example_video_1" class="video-js vjs-default-skin" controls preload="none" width="640" height="264" 		
       poster="http://video-js.zencoder.com/oceans-clip.png"
       data-setup="{}">
       
@@ -23,10 +31,13 @@
     <source src="http://video-js.zencoder.com/oceans-clip.ogv" type='video/ogg' />
     <track kind="captions" src="demo.captions.vtt" srclang="en" label="English"></track><!-- Tracks need an ending tag thanks to IE9 -->
     <track kind="subtitles" src="demo.captions.vtt" srclang="en" label="English"></track><!-- Tracks need an ending tag thanks to IE9 -->
-    <p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading to a web browser that <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a></p>
+    
+	<p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading to a web browser that <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a></p>
+  
   </video>
-   <div id="overlay">
-</div>
+					
+	
+   
 <input type="button" value="Stop Marquee" onClick="document.getElementById('marquee1').stop();">
 <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>" method="post" onSubmit="setVideoTime()">
 Comment: <br><textarea type="text" name="comment" placeholder="Maximum 200 words..." rows="3" cols="40" wrap=PHYSICAL onKeyDown="gbcount(this.form.comment,this.form.total,this.form.used,this.form.remain);" onKeyUp="gbcount(this.form.comment,this.form.total,this.form.used,this.form.remain);"></textarea>
@@ -46,7 +57,7 @@ Left:
 
 </body>
 <?php
-include '/Applications/MAMP/htdocs/ChromePhp.php';
+//include '/Applications/MAMP/htdocs/ChromePhp.php';
 //ChromePhp::log('Hello console!');
 //ChromePhp::log($_SERVER);
 //ChromePhp::warn('something went wrong!');
@@ -57,7 +68,7 @@ define('DB_HOSTNAME', '127.0.0.1');
 define('DB_USERNAME', 'wampuser');
 define('DB_PASSWORD', 'xxxx');
 define('DB_DATABASE', 'danmaku');
-define('DB_PORT',     8889);
+define('DB_PORT',     3306);
 
 
 // Connect to the MySQL server and set the default database
@@ -153,11 +164,14 @@ if (!empty($_POST["comment"])){
 			?>
 
 
-  <script>
+  <script type="text/javascript">
 
 	var arr = <?php echo json_encode($temp); ?>;
      var whereYouAt; //global var
      var count = 0;
+	 var can, ctx, step, steps = 0, delay = 20;
+	 
+	 
     function loadOverlay (){
       
    
@@ -180,7 +194,18 @@ if (!empty($_POST["comment"])){
   myPlayer.on("seeked",refreshTime);
   myPlayer.on("pause",stopComment);
   myPlayer.on("play",startComment);
-
+  
+  //html canvas init() start
+  can = document.getElementById("MyCanvas1");
+            ctx = can.getContext("2d");
+            ctx.fillStyle = "blue";
+            ctx.font = "20pt Verdana";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            step = 320;
+            steps = 0;
+            RunTextLeftToRight();
+	//html canvas init() end
    }
    
    
@@ -208,6 +233,34 @@ function refreshTime(){
 }
 
 }
+
+function RunTextLeftToRight() {
+            step--;
+            ctx.clearRect(0, 0, can.width, can.height);
+            ctx.save();
+            ctx.translate(step, can.height / 2);
+			
+			//if(whereYouAt > arr[count][0] && showing == false && whereYouAt < arr[count][0]+0.5){ // check current playing time with DB comment playTime. showing == true(run this only once)
+				//document.getElementById("overlay").innerHTML="<marquee behavior=\"scroll\" direction=\"left\" id=\"marquee1\">"+arr[count][1]+"</marquee>";
+				//step--;
+				//ctx.clearRect(0, 0, can.width, can.height);
+				//ctx.save();
+				//ctx.translate(step, can.height / 2);
+				//ctx.fillText(arr[count][1], 0, 0);
+				//ctx.restore();
+				//if (step == steps)
+					//step = 320;
+				//if (step > steps)
+					//var t = setTimeout('RunTextLeftToRight()', delay);
+				//count ++;
+			//}
+            ctx.fillText("Welcome", 0, 0);
+			ctx.restore();
+            if (step == steps)
+                step = 320;
+            if (step > steps)
+                var t = setTimeout('RunTextLeftToRight()', delay);
+        }
 
   </script>
 </html>
