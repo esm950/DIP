@@ -168,32 +168,11 @@ if (!empty($_POST["comment"])){
      var whereYouAt; //global var
      var count = 0;
 	 var can, ctx, step, steps = 0, delay = 20;
-	 
+	 var noOfComment = 0;
 	 
     function loadOverlay (){
       
-   
-   var myPlayer = videojs('example_video_1');
-   var showing = false;
-   myPlayer.play();
-   myPlayer.pause();
-   var playing = function(){
-   var myPlayer= this;
-   whereYouAt = myPlayer.currentTime();
-
-   if(whereYouAt > arr[count][0] && showing == false && whereYouAt < arr[count][0]+0.5){ // check current playing time with DB comment playTime. showing == true(run this only once)
-
-	  count ++;
-	  }
-   showing = false;
-    
-   }
-  
-  myPlayer.on("timeupdate",playing); // as long as time is updating, will run function "playing"
-  myPlayer.on("seeked",refreshTime);
-  myPlayer.on("pause",stopComment);
-  myPlayer.on("play",startComment);
-  
+     
   //html canvas init() start
   can = document.getElementById("MyCanvas1");
             ctx = can.getContext("2d");
@@ -201,10 +180,39 @@ if (!empty($_POST["comment"])){
             ctx.textBaseline = "middle";
             step = 640;						//width of canvas
             steps = 0;
-            displayComment(can.height/2, "20pt Verdana","white",1);
-            displayComment(can.height/2, "20pt Verdana","white",2);
-            displayComment(can.height/2, "20pt Verdana","white",3);
+            //displayComment(can.height/2, "20pt Verdana","white",1);
 	//html canvas init() end
+	
+   var myPlayer = videojs('example_video_1');
+   myPlayer.play();
+   myPlayer.pause();
+   
+   var playing = function(){
+   var myPlayer= this;
+   whereYouAt = myPlayer.currentTime();
+
+   if(whereYouAt > arr[count][0] && whereYouAt < arr[count][0]+0.5){ // check current playing time with DB comment playTime. showing == true(run this only once)
+   arr[count][3] = 640;		//position counter for this comment
+   arr[count][4] = count*20+50; //height counter for this comment
+   arr[count][5] = 2; // speed
+   noOfComment++;
+   if(count == 0){
+   console.log("RUN ONCE");
+   displayComment(arr[count][1],arr[count][4], "20pt Verdana","white",1,count);
+   }
+   //displayComment(arr[count][1],can.height/2, "20pt Verdana","red",1,count);
+
+      console.log("COMMENTS = "+noOfComment);
+	  count ++;
+	  }
+	 
+
+   }
+  myPlayer.on("timeupdate",playing); // as long as time is updating, will run function "playing"
+  myPlayer.on("seeked",refreshTime);
+  myPlayer.on("pause",stopComment);
+  myPlayer.on("play",startComment);
+
    }
     videojs.options.flash.swf = "video-js.swf";
             
@@ -227,22 +235,39 @@ function refreshTime(){
 
 }
 
-function displayComment(height,font, fontColor, speed) {	//	generic function to display comment
+function displayComment(comment,height,font,fontColor, speed,arrayCount) {	//	generic function to display comment
             //step--;
-            step = step - speed;
-            ctx.fillStyle = fontColor;
-            ctx.font = font;
+            //console.log("arrayCount =  "+arrayCount+" value = "+arr[arrayCount][3]);
+            //console.log("step =  "+step);
+            //step = step - speed;
+            //arr[arrayCount][3] = arr[arrayCount][3] - speed;
+            //ctx.fillStyle = fontColor;
+            //ctx.font = font;
+            
+            ctx.fillStyle = "red";
+            ctx.font = "20pt Verdana";
             ctx.clearRect(0, 0, can.width, can.height);
-            ctx.save();
-            ctx.translate(step, height);
-            ctx.fillText("Welcome", 0, 0);
-			ctx.restore();
-            if (step == steps)
-                step = 640;
-            if (step > steps)
-                var t = setTimeout('displayComment(can.height/2, "10pt Verdana","white",1)', delay);
+            ctx.save();								//save style and font and clear canvas
+            //ctx.translate(step, height);
+            //ctx.translate(arr[arrayCount][3], height);
+            for (var i = 0; i <= noOfComment; i ++){
+              if (arr[i][3] == steps){
+                arr[i][3] = 640;                
+                }					//set default position to right if end of frame
+            writeStatic(arr[i][1],arr[i][3],arr[i][4]);				//print comment on current position
+            //ctx.translate(arr[i][3], arr[i][4]);	//change default position to current location           
+            arr[i][3] = arr[i][3] - arr[i][5];	
+            console.log(arr[i][4]);						// minus the current position to the left
+            }
+            ctx.restore();            				//load the style back to text
+           // if (arr[arrayCount][3] > steps)
+                //var t = setTimeout('displayComment(can.height/2, "10pt Verdana","white",1)', delay);
+                 var t = setTimeout('displayComment("'+comment+'",'+height+',"'+font+'","'+fontColor+'",'+speed+','+arrayCount+')', delay);
         }
-
+function writeStatic(comment,width,height){
+	ctx.fillText(comment, width, height);
+	
+}
   </script>
 </html>
 
