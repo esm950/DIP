@@ -206,6 +206,7 @@ if (!empty($_POST["comment"])){
 	 
 
    }
+   //status of player
   myPlayer.on("timeupdate",playing); // as long as time is updating, will run function "playing"
   myPlayer.on("seeked",refreshTime);
   myPlayer.on("pause",stopComment);
@@ -214,6 +215,8 @@ if (!empty($_POST["comment"])){
    }
     videojs.options.flash.swf = "video-js.swf";
             
+            
+            // Different function for events
 function setVideoTime (){
 document.getElementById("VT").value = Math.floor(whereYouAt);
 }
@@ -239,6 +242,7 @@ function refreshTime(){
 startCommentIndex = count;
 endCommentIndex = count;
 }
+//Core function of comment
 
 function displayComment() {	//	generic function to display comment
             if(isPaused == 0){
@@ -256,6 +260,8 @@ function displayComment() {	//	generic function to display comment
             ctx.restore();            				//load the style back to text
             var t = setTimeout('displayComment()', delay);
         }
+        
+        //Print static text on xy plane
 function writeStatic(comment,width,height){
 	ctx.fillText(comment, width, height);
 	
