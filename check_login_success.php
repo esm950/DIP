@@ -73,7 +73,7 @@ echo $ID_num;  //for debugging purpose
   <div id="stylefour">
     <ul>
       <li><a href="#url">Home</a></li>
-      <li><a href="testing.php">Courses</a></li>
+      <li><a href="url">Courses</a></li>
       <li><a href="#url">My Filling Cabinet</a></li>
       <li><a href="#url">Community</a></li>
       <li><a href="#url">Services</a></li>
@@ -84,7 +84,7 @@ echo $ID_num;  //for debugging purpose
 <br><br><br>
 	<div id="Courses">
 	 <span class="Italic">Courses where you are: Student</span><br><br>
-     <a href="try.html"><span class="bold">IM3080 Design & Innovation Project</span></a><br> 
+     <a href="try.php"><span class="bold">IM3080 Design & Innovation Project</span></a><br> 
 	 Instructor: Prof Chua
 	 
 	 </div>

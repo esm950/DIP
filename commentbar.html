@@ -1,0 +1,61 @@
+
+<html>
+
+ <script>
+        var iframe;   
+        try {   
+            iframe = document.createElement('<iframe name="iframe">');   
+        } catch (ex) {   
+            iframe = document.createElement('iframe');   
+        }    
+        iframe.id = 'iframe';   
+        iframe.name = 'iframe';   
+        iframe.width = 510;   
+        iframe.height = 300;   
+        iframe.marginHeight = 0;   
+        iframe.marginWidth = 0;  
+        iframe.src = "RefreshTable.php"
+
+        document.body.appendChild(iframe);
+        </script>
+<br>
+
+<script>
+
+var arr = <?php echo json_encode($temp); ?>;
+var whereYouAt; //global var
+var count = 0;
+function loadOverlay() {
+
+	var myPlayer = videojs('example_video_1');
+	var showing = false;
+	
+	var playing = function() {
+	var myPlayer = this;
+	whereYouAt = myPlayer.currentTime();
+
+	      if (whereYouAt > arr[count][0] && showing == false) { // check current playing time with DB comment playTime. showing == true(run this only once)
+		         document.getElementById("overlay").innerHTML = "<marquee>" + arr[count][1] + "</marquee>";
+		         count++;
+	      }
+	      showing = false;
+
+    }
+	myPlayer.on("timeupdate", playing); // as long as time is updating, will run function "playing"
+
+}
+	//var overlay= document.getElementById('overlay');
+	//var video= document.getElementById('v');
+
+	videojs.options.flash.swf = "video-js.swf";
+
+function setVideoTime() {
+	document.getElementById("VT").value = Math.floor(whereYouAt);
+		//alert(document.getElementById("VT").value);
+
+}
+
+
+</script>
+
+</html>
