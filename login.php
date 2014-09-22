@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 
 <head>
@@ -14,9 +15,10 @@
 
 <body>
 
+
   <div class="login-card">
     <h1>Log-in</h1><br>
-  <form name="form1" method="post" action="checklogin.php">
+  <form name="form1" method="post" action="check_login_success.php">
     <input type="text" name="mystudent_ID" placeholder="Username">
     <input type="password" name="mypassword" placeholder="Password">
     <input type="submit" name="login" class="login login-submit" value="login">
