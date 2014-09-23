@@ -260,9 +260,10 @@ function displayComment() {	//	generic function to display comment
             ctx.clearRect(0, 0, can.width, can.height);
             ctx.save();								//save style and font and clear canvas
             for (var i = startCommentIndex; i < endCommentIndex && i >= startCommentIndex; i ++){
-              //if (arr[i][3] == steps){        //removed repeated comments
+              if (arr[i][3] == steps){        //removed repeated comments
+                startCommentIndex++;
                 //arr[i][3] = 640;             		  //set default position to right if end of frame 
-                //}					
+                }					
             writeStatic(arr[i][1],arr[i][3],arr[i][4]);				//print comment on current position          
             arr[i][3] = arr[i][3] - arr[i][5];						// minus the current position to the left
             }
