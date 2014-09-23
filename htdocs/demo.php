@@ -171,7 +171,7 @@ if (!empty($_POST["comment"])){
 	 var colourCode = "#00ff00"; //variable to store color code from DB (must be a string)
 	 var fontSize = "20"; //variable to store font size from DB (must be a string)
 	 var fontType = "Comic Sans MS" //variable to store font type from DB (must be a string)
-	 var can, ctx, step, steps = 0, delay = 20;
+	 var can, ctx, step, steps = 0, delay = 20; //replace steps with 0- limit of string pixel
 	 var noOfComment = 0;
 	 var startCommentIndex = 0;
 	 var endCommentIndex= 0;
@@ -260,7 +260,7 @@ function displayComment() {	//	generic function to display comment
             ctx.clearRect(0, 0, can.width, can.height);
             ctx.save();								//save style and font and clear canvas
             for (var i = startCommentIndex; i < endCommentIndex && i >= startCommentIndex; i ++){
-              if (arr[i][3] == steps){        //removed repeated comments
+              if (arr[i][3] <= steps){        
                 startCommentIndex++;
                 //arr[i][3] = 640;             		  //set default position to right if end of frame 
                 }					
