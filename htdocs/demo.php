@@ -168,6 +168,9 @@ if (!empty($_POST["comment"])){
      var whereYouAt; //global var
 	 var height = 0;
      var count = 0;
+	 var colourCode = "#00ff00"; //variable to store color code from DB (must be a string)
+	 var fontSize = "20"; //variable to store font size from DB (must be a string)
+	 var fontType = "Comic Sans MS" //variable to store font type from DB (must be a string)
 	 var can, ctx, step, steps = 0, delay = 20;
 	 var noOfComment = 0;
 	 var startCommentIndex = 0;
@@ -196,10 +199,10 @@ if (!empty($_POST["comment"])){
    if(whereYouAt > arr[count][0] && whereYouAt < arr[count][0]+0.5){ // check current playing time with DB comment playTime. showing == true(run this only once)
    arr[count][3] = 640;			//position counter for this comment
    height = count*20+50;
-   if(height < 215) {
+   if(height < 215) { //if height has not reached the end of the canvas
    arr[count][4] = count*20+50; //height counter for this comment
    } else {
-   arr[count][4] = (count*20+50) - 215; 
+   arr[count][4] = (count*20+50) - 215; //once the position of the comment have reached the bottom of the canvas, position it at the top again
    }
    arr[count][5] = 2; 			// speed
    //arr[count][6] = 			//font
@@ -252,12 +255,12 @@ endCommentIndex = count;
 
 function displayComment() {	//	generic function to display comment
             if(isPaused == 0){
-            ctx.fillStyle = "red";
-            ctx.font = "20pt Verdana";
+            ctx.fillStyle = colourCode;
+            ctx.font = fontSize + "pt " + fontType; //font of different comments
             ctx.clearRect(0, 0, can.width, can.height);
             ctx.save();								//save style and font and clear canvas
             for (var i = startCommentIndex; i < endCommentIndex && i >= startCommentIndex; i ++){
-              //if (arr[i][3] == steps){
+              //if (arr[i][3] == steps){        //removed repeated comments
                 //arr[i][3] = 640;             		  //set default position to right if end of frame 
                 //}					
             writeStatic(arr[i][1],arr[i][3],arr[i][4]);				//print comment on current position          
