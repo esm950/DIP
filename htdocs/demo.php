@@ -166,6 +166,7 @@ if (!empty($_POST["comment"])){
 	  //init starting variable
 	var arr = <?php echo json_encode($temp); ?>;
      var whereYouAt; //global var
+	 var height = 0;
      var count = 0;
 	 var can, ctx, step, steps = 0, delay = 20;
 	 var noOfComment = 0;
@@ -194,7 +195,12 @@ if (!empty($_POST["comment"])){
 
    if(whereYouAt > arr[count][0] && whereYouAt < arr[count][0]+0.5){ // check current playing time with DB comment playTime. showing == true(run this only once)
    arr[count][3] = 640;			//position counter for this comment
+   height = count*20+50;
+   if(height < 215) {
    arr[count][4] = count*20+50; //height counter for this comment
+   } else {
+   arr[count][4] = (count*20+50) - 215; 
+   }
    arr[count][5] = 2; 			// speed
    //arr[count][6] = 			//font
    //arr[count][7] = 			//color
@@ -251,9 +257,9 @@ function displayComment() {	//	generic function to display comment
             ctx.clearRect(0, 0, can.width, can.height);
             ctx.save();								//save style and font and clear canvas
             for (var i = startCommentIndex; i < endCommentIndex && i >= startCommentIndex; i ++){
-              if (arr[i][3] == steps){
-                arr[i][3] = 640;             		  //set default position to right if end of frame 
-                }					
+              //if (arr[i][3] == steps){
+                //arr[i][3] = 640;             		  //set default position to right if end of frame 
+                //}					
             writeStatic(arr[i][1],arr[i][3],arr[i][4]);				//print comment on current position          
             arr[i][3] = arr[i][3] - arr[i][5];						// minus the current position to the left
             }
