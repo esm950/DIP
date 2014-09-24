@@ -4,8 +4,8 @@
 <head>
   <title>Video.js | HTML5 Video Player</title>
   <style>
-        canvas{border: 1px solid #bbb;}
-		.subdiv{width: 320px;}
+        canvas{border: 0px solid #bbb;}
+        .subdiv{width: 320px;}
         .text{margin: auto; width: 320px;}
   </style>
 
@@ -16,19 +16,18 @@
   <script src="video.js"></script>
 
 
-</head>   
-
+</head>
 <body onload="loadOverlay()">  
+<div id="overlay">
+   <canvas id="MyCanvas1" width="635" height="225">
+      This browser or document mode doesn't support canvas object</canvas>
 
-<div id="overlay" width="640" height="264">
-<canvas id="MyCanvas1" width="640" height="120">
-	This browser or document mode doesn't support canvas object</canvas>
 </div>
+
  <video id="example_video_1" class="video-js vjs-default-skin" controls preload="none" width="640" height="264" 		
-      poster="http://video-js.zencoder.com/oceans-clip.png" 
+      poster="http://video-js.zencoder.com/oceans-clip.png"
       data-setup="{}">
-      
-    <source src="http://video-js.zencoder.com/oceans-clip.mp4" type='video/mp4' />
+          <source src="http://video-js.zencoder.com/oceans-clip.mp4" type='video/mp4' />
     <source src="http://video-js.zencoder.com/oceans-clip.webm" type='video/webm' />
     <source src="http://video-js.zencoder.com/oceans-clip.ogv" type='video/ogg' />
     <track kind="captions" src="demo.captions.vtt" srclang="en" label="English"></track><!-- Tracks need an ending tag thanks to IE9 -->
@@ -38,9 +37,6 @@
   
   </video>
 					
-	
-   
-<input type="button" value="Stop Marquee" onClick="document.getElementById('marquee1').stop();">
 <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>" method="post" onSubmit="setVideoTime()">
 Comment: <br><textarea type="text" name="comment" placeholder="Maximum 200 words..." rows="3" cols="40" wrap=PHYSICAL onKeyDown="gbcount(this.form.comment,this.form.total,this.form.used,this.form.remain);" onKeyUp="gbcount(this.form.comment,this.form.total,this.form.used,this.form.remain);"></textarea>
 <input type="hidden" value="" name="videoTime" id="VT">
@@ -167,103 +163,120 @@ if (!empty($_POST["comment"])){
 
 
   <script type="text/javascript">
-
+	  //init starting variable
 	var arr = <?php echo json_encode($temp); ?>;
      var whereYouAt; //global var
+	 var height = 0;
      var count = 0;
-	 var can, ctx, step, steps = 0, delay = 20;
-	 
+	 var colourCode = "#00ff00"; //variable to store color code from DB (must be a string)
+	 var fontSize = "20"; //variable to store font size from DB (must be a string)
+	 var fontType = "Comic Sans MS" //variable to store font type from DB (must be a string)
+	 var can, ctx, step, delay = 20; 
+	 var steps = 0;
+	 var noOfComment = 0;
+	 var startCommentIndex = 0;
+	 var endCommentIndex= 0;
+	 var isPaused = 0;
 	 
     function loadOverlay (){
       
-     //html canvas init() start
+     
+  //html canvas init() start
   can = document.getElementById("MyCanvas1");
             ctx = can.getContext("2d");
-            ctx.fillStyle = "blue";
-            ctx.font = "20pt Verdana";
-            ctx.textAlign = "center";
+            ctx.textAlign = "start";
             ctx.textBaseline = "middle";
-            step = 320;
-            steps = 0;
-            RunTextLeftToRight();
+            steps = -300;	//replace steps with 0- limit of string pixel
 	//html canvas init() end
+	
    var myPlayer = videojs('example_video_1');
-   var showing = false;
+   myPlayer.play();	//init displayComment loop
+   myPlayer.pause();
+   
    var playing = function(){
    var myPlayer= this;
    whereYouAt = myPlayer.currentTime();
 
-   if(whereYouAt > arr[count][0] && showing == false && whereYouAt < arr[count][0]+0.5){ // check current playing time with DB comment playTime. showing == true(run this only once)
-	  document.getElementById("overlay").innerHTML="<marquee behavior=\"scroll\" direction=\"left\" id=\"marquee1\">"+arr[count][1]+"</marquee>";
-
+   if(whereYouAt > arr[count][0] && whereYouAt < arr[count][0]+0.5){ // check current playing time with DB comment playTime. showing == true(run this only once)
+   arr[count][3] = 640;			//position counter for this comment
+   height = count*20+50;
+   if(height < 215) { //if height has not reached the end of the canvas
+   arr[count][4] = count*20+50; //height counter for this comment
+   } else {
+   arr[count][4] = (count*20+50) - 215; //once the position of the comment have reached the bottom of the canvas, position it at the top again
+   }
+   arr[count][5] = 2; 			// speed
+   //arr[count][6] = 			//font
+   //arr[count][7] = 			//color
+   //arr[count][8] = 			//reserve
+   noOfComment++;
+   endCommentIndex++;
 	  count ++;
 	  }
-   showing = false;
-    
+	 
+
    }
-  
+   //status of player
   myPlayer.on("timeupdate",playing); // as long as time is updating, will run function "playing"
   myPlayer.on("seeked",refreshTime);
   myPlayer.on("pause",stopComment);
   myPlayer.on("play",startComment);
-  
 
    }
-   
-   
-  //var overlay= document.getElementById('overlay');
-  //var video= document.getElementById('v');
- 
     videojs.options.flash.swf = "video-js.swf";
             
+            
+            // Different function for events
 function setVideoTime (){
 document.getElementById("VT").value = Math.floor(whereYouAt);
 }
 
 function stopComment(){
-	document.getElementById('marquee1').stop();
+	if(isPaused == 0)
+	isPaused = 1;
 }
 function startComment(){
-	document.getElementById('marquee1').start();
+	if(isPaused == 1){
+	isPaused = 0;
+	displayComment();
+	}
 }
 function refreshTime(){
 	count = 0;
-	document.getElementById("overlay").innerHTML=""; // clear current comment
-	 while(whereYouAt > arr[count][0] && whereYouAt < arr[count][0]+0.5){
+	ctx.clearRect(0, 0, can.width, can.height);
+		 while(whereYouAt > arr[count][0] && whereYouAt < arr[count][0]+0.5){
+		 
 	  count ++;
 	
 }
-
+startCommentIndex = count;
+endCommentIndex = count;
 }
+//Core function of comment
 
-function RunTextLeftToRight() {
-            step--;
+function displayComment() {	//	generic function to display comment
+            if(isPaused == 0){
+            ctx.fillStyle = colourCode;
+            ctx.font = fontSize + "pt " + fontType; //font of different comments
             ctx.clearRect(0, 0, can.width, can.height);
-            ctx.save();
-            ctx.translate(step, can.height / 2);
-			
-			//if(whereYouAt > arr[count][0] && showing == false && whereYouAt < arr[count][0]+0.5){ // check current playing time with DB comment playTime. showing == true(run this only once)
-				//document.getElementById("overlay").innerHTML="<marquee behavior=\"scroll\" direction=\"left\" id=\"marquee1\">"+arr[count][1]+"</marquee>";
-				//step--;
-				//ctx.clearRect(0, 0, can.width, can.height);
-				//ctx.save();
-				//ctx.translate(step, can.height / 2);
-				//ctx.fillText(arr[count][1], 0, 0);
-				//ctx.restore();
-				//if (step == steps)
-					//step = 320;
-				//if (step > steps)
-					//var t = setTimeout('RunTextLeftToRight()', delay);
-				//count ++;
-			//}
-            ctx.fillText("Welcome", 0, 0);
-			ctx.restore();
-            if (step == steps)
-                step = 320;
-            if (step > steps)
-                var t = setTimeout('RunTextLeftToRight()', delay);
+            ctx.save();								//save style and font and clear canvas
+            for (var i = startCommentIndex; i < endCommentIndex && i >= startCommentIndex; i ++){
+              if (arr[i][3] < steps){        
+                startCommentIndex++;
+                //arr[i][3] = 640;             		  //set default position to right if end of frame 
+                }					
+            writeStatic(arr[i][1],arr[i][3],arr[i][4]);				//print comment on current position          
+            arr[i][3] = arr[i][3] - arr[i][5];						// minus the current position to the left
+            }
+            ctx.restore();            				//load the style back to text
+            var t = setTimeout('displayComment()', delay);
         }
-
+        
+        //Print static text on xy plane
+function writeStatic(comment,width,height){
+	ctx.fillText(comment, width, height);
+	
+}}
   </script>
 </html>
 
