@@ -23,8 +23,12 @@
    <canvas id="MyCanvas1" width="635" height="225"> //dimensions of the canvas
       This browser or document mode doesn't support canvas object</canvas>
 
-</div>
 
+
+   
+
+
+</div>
  <video id="example_video_1" class="video-js vjs-default-skin" controls preload="none" width="640" height="264" 		
       poster="http://video-js.zencoder.com/oceans-clip.png"
       data-setup="{}">
@@ -174,13 +178,16 @@ if (!empty($_POST["comment"])){
 	 var fontType = "Comic Sans MS" //variable to store font type from DB (must be a string)
 	 var can, ctx, step, delay = 20;
 	 var steps = 0;
-	 var speed = 1;
+	 var speed = 2;
 	 var noOfComment = 0;
 	 var startCommentIndex = 0;
 	 var endCommentIndex= 0;
 	 var isPaused = 0;
 	 var Comments = [];
+	 var anno , annoStyle;
 	 
+
+
     function loadOverlay (){
       
      
@@ -190,6 +197,10 @@ if (!empty($_POST["comment"])){
             ctx.textAlign = "start";
             ctx.textBaseline = "middle";
             steps = -300;	//replace steps with 0- limit of string pixel
+
+			can.addEventListener("click", onCanvasClick, false);
+
+
 	//html canvas init() end
 	
    var myPlayer = videojs('example_video_1');
@@ -204,7 +215,7 @@ if (!empty($_POST["comment"])){
    var comment = new Comment(arr[count][1],arr[count][0],640,count*20+50,fontType,fontSize,colorCode);
    Comments[count] = comment;
    //console.log(comment.commentStr);
-   arr[count][3] = 640;			//position counter for this comment
+   //arr[count][3] = 640;			//position counter for this comment
    height = count*20+50;
    if(height < 215) { //if height has not reached the end of the canvas
    arr[count][4] = count*20+50; //height counter for this comment
@@ -256,18 +267,19 @@ function refreshTime(){
 startCommentIndex = count;
 endCommentIndex = count;
 }
-//Core function of comment
 
+//Core function of comment
 function displayComment() {	//	generic function to display comment
             if(isPaused == 0){
             
             ctx.clearRect(0, 0, can.width, can.height);
             ctx.save();								//save style and font and clear canvas
             for (var i = startCommentIndex; i < endCommentIndex && i >= startCommentIndex; i ++){
-              if (arr[i][3] < steps){					//if comment at end of video frame, stop displaying the comment      
+              if (Comments[i].getLength() < steps){					//if comment at end of video frame, stop displaying the comment      
                 startCommentIndex++;
                 //arr[i][3] = 640;             		  //set default position to right if end of frame 
                 }
+				
             ctx.fillStyle = Comments[i].getColor();
             ctx.font = Comments[i].getFont(); //font of different comments				
             writeStatic(Comments[i].getComment(),Comments[i].getLength(),Comments[i].getHeight());				//print comment on current position          
@@ -282,6 +294,35 @@ function writeStatic(comment,width,height){
 	ctx.fillText(comment, width, height);
 	
 }}
+
+function onCanvasClick(e) {
+  	//alert(getCursorPosition(e));  //Check which comment is clicked.
+  	for (var i = startCommentIndex; i < endCommentIndex && i >= startCommentIndex; i ++){
+  	console.log(i);
+	if(Comments[i].checkClicked(getCursorPosition(e))==0){
+		alert("Clicked "+ Comments[i].getComment());
+	}				
+}
+  }
+  
+  function getCursorPosition(e) {
+  	var x;
+    var y;
+    if (e.pageX != undefined && e.pageY != undefined) {
+	x = e.pageX;
+	y = e.pageY;
+    }
+    else {
+	x = e.clientX + document.body.scrollLeft +
+            document.documentElement.scrollLeft;
+	y = e.clientY + document.body.scrollTop +
+            document.documentElement.scrollTop;
+    }
+    x -= can.offsetLeft;
+    y -= can.offsetTop;
+    
+    return [x,y];
+  }
   </script>
 </html>
 
