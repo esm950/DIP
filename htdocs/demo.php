@@ -14,12 +14,13 @@
   <!-- video.js must be in the <head> for older IEs to work. -->
  
   <script src="video.js"></script>
+  <script src="comment.js"></script>
 
 
 </head>
 <body onload="loadOverlay()">  
 <div id="overlay">
-   <canvas id="MyCanvas1" width="635" height="225">
+   <canvas id="MyCanvas1" width="635" height="225"> //dimensions of the canvas
       This browser or document mode doesn't support canvas object</canvas>
 
 </div>
@@ -73,7 +74,7 @@ define('DB_PORT',     3306);
 $mysqli = new mysqli(DB_HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_DATABASE, DB_PORT);
 !$mysqli->connect_errno
       or die("Error: Failed to CONNECT: ({$mysqli->connect_errno}) {$mysqli->connect_error}");
-echo 'INFO: Connected to MySQL at ' . DB_HOSTNAME . ':' . DB_PORT . '/' . DB_DATABASE . ' (' . DB_USERNAME . ')<br />'; //connected to database
+//echo 'INFO: Connected to MySQL at ' . DB_HOSTNAME . ':' . DB_PORT . '/' . DB_DATABASE . ' (' . DB_USERNAME . ')<br />'; //connected to database
 
 $ID_video = 'im3080'; //database name
 
@@ -95,10 +96,10 @@ function tabulate_resultset($resultSet) {
   echo '<table border=1><tr>';
   // Get fields' name and print table header row
   echo "<th>Time</th>";
-  echo "<th width=70% >Comment</th>";
-  echo "<th>Published on</th>";
-  //echo "<th>Like</th>";
-  //echo "<th>Dislike</th>";
+  echo "<th width=60% >Comment</th>";
+  echo "<th>Insert date</th>";
+  echo "<th>Like</th>";
+  echo "<th>Dislike</th>";
   echo '</tr>';
   
 global $temp;
@@ -165,18 +166,20 @@ if (!empty($_POST["comment"])){
   <script type="text/javascript">
 	  //init starting variable
 	var arr = <?php echo json_encode($temp); ?>;
-     var whereYouAt; //global var
+     var currVideoTime; //global var
 	 var height = 0;
      var count = 0;
-	 var colourCode = "#00ff00"; //variable to store color code from DB (must be a string)
-	 var fontSize = "20"; //variable to store font size from DB (must be a string)
+	 var colorCode = "#00ff00"; //variable to store color code from DB (must be a string)
+	 var fontSize = "20pt "; //variable to store font size from DB (must be a string)
 	 var fontType = "Comic Sans MS" //variable to store font type from DB (must be a string)
-	 var can, ctx, step, delay = 20; 
+	 var can, ctx, step, delay = 20;
 	 var steps = 0;
+	 var speed = 1;
 	 var noOfComment = 0;
 	 var startCommentIndex = 0;
 	 var endCommentIndex= 0;
 	 var isPaused = 0;
+	 var Comments = [];
 	 
     function loadOverlay (){
       
@@ -195,20 +198,21 @@ if (!empty($_POST["comment"])){
    
    var playing = function(){
    var myPlayer= this;
-   whereYouAt = myPlayer.currentTime();
+   currVideoTime = myPlayer.currentTime();
 
-   if(whereYouAt > arr[count][0] && whereYouAt < arr[count][0]+0.5){ // check current playing time with DB comment playTime. showing == true(run this only once)
+   if(currVideoTime > arr[count][0] && currVideoTime < arr[count][0]+0.5){ // check current playing time with DB comment playTime. showing == true(run this only once)
+   var comment = new Comment(arr[count][1],arr[count][0],640,count*20+50,fontType,fontSize,colorCode);
+   Comments[count] = comment;
+   //console.log(comment.commentStr);
    arr[count][3] = 640;			//position counter for this comment
    height = count*20+50;
    if(height < 215) { //if height has not reached the end of the canvas
    arr[count][4] = count*20+50; //height counter for this comment
+   comment.setHeight(count*20+50);
    } else {
    arr[count][4] = (count*20+50) - 215; //once the position of the comment have reached the bottom of the canvas, position it at the top again
+   comment.setHeight((count*20+50) - 215);
    }
-   arr[count][5] = 2; 			// speed
-   //arr[count][6] = 			//font
-   //arr[count][7] = 			//color
-   //arr[count][8] = 			//reserve
    noOfComment++;
    endCommentIndex++;
 	  count ++;
@@ -228,7 +232,7 @@ if (!empty($_POST["comment"])){
             
             // Different function for events
 function setVideoTime (){
-document.getElementById("VT").value = Math.floor(whereYouAt);
+document.getElementById("VT").value = Math.floor(currVideoTime);
 }
 
 function stopComment(){
@@ -244,7 +248,7 @@ function startComment(){
 function refreshTime(){
 	count = 0;
 	ctx.clearRect(0, 0, can.width, can.height);
-		 while(whereYouAt > arr[count][0] && whereYouAt < arr[count][0]+0.5){
+		 while(currVideoTime > arr[count][0] && currVideoTime < arr[count][0]+0.5){
 		 
 	  count ++;
 	
@@ -256,17 +260,18 @@ endCommentIndex = count;
 
 function displayComment() {	//	generic function to display comment
             if(isPaused == 0){
-            ctx.fillStyle = colourCode;
-            ctx.font = fontSize + "pt " + fontType; //font of different comments
+            
             ctx.clearRect(0, 0, can.width, can.height);
             ctx.save();								//save style and font and clear canvas
             for (var i = startCommentIndex; i < endCommentIndex && i >= startCommentIndex; i ++){
-              if (arr[i][3] < steps){        
+              if (arr[i][3] < steps){					//if comment at end of video frame, stop displaying the comment      
                 startCommentIndex++;
                 //arr[i][3] = 640;             		  //set default position to right if end of frame 
-                }					
-            writeStatic(arr[i][1],arr[i][3],arr[i][4]);				//print comment on current position          
-            arr[i][3] = arr[i][3] - arr[i][5];						// minus the current position to the left
+                }
+            ctx.fillStyle = Comments[i].getColor();
+            ctx.font = Comments[i].getFont(); //font of different comments				
+            writeStatic(Comments[i].getComment(),Comments[i].getLength(),Comments[i].getHeight());				//print comment on current position          
+            Comments[i].move(speed);				// minus the current position to the left
             }
             ctx.restore();            				//load the style back to text
             var t = setTimeout('displayComment()', delay);
