@@ -1,15 +1,15 @@
-
 <?php
 session_start();
 ?>
 
+<!DOCTYPE html>
 
 <html>
 <head>
   <title>Video.js | HTML5 Video Player</title>
 
   <!-- Chang URLs to wherever Video.js files will be hosted -->
-  <link rel="stylesheet" href="video-js.css" type="text/css">
+  <link href="video-js.css" rel="stylesheet" type="text/css">
   <!-- video.js must be in the <head> for older IEs to work. -->
 
   <script src="video.js"></script>
@@ -75,14 +75,92 @@ function send_time(videoTime){
 </script>
 
 </head>
-<body onload="loadOverlay()" background= "http://www.thoinayweb.com/wp-content/uploads/2013/12/powerpoint-background.jpg">
+<body onload="loadOverlay()">
 <?php
-echo $_SESSION ['student_ID'];
-?>
-<table class="TwoByOne" border= "0">
+echo $_SESSION['student_ID'];?><br><br>
+&nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp 
+
+		 
+			<script>
+function loadXMLDoc1()
+{
+var xmlhttp;
+if (window.XMLHttpRequest)
+  {// code for IE7+, Firefox, Chrome, Opera, Safari
+  xmlhttp=new XMLHttpRequest();
+  }
+else
+  {// code for IE6, IE5
+  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+  }
+xmlhttp.onreadystatechange=function()
+  {
+  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+    {
+    document.getElementById("myDiv").innerHTML=xmlhttp.responseText;
+    }
+  }
+xmlhttp.open("GET", "responsesSatisfied.php",true);
+xmlhttp.send();
+</script>
+<script>
+function loadXMLDoc2()
+{
+var xmlhttp;
+if (window.XMLHttpRequest)
+  {// code for IE7+, Firefox, Chrome, Opera, Safari
+  xmlhttp=new XMLHttpRequest();
+  }
+else
+  {// code for IE6, IE5
+  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+  }
+xmlhttp.onreadystatechange=function()
+  {
+  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+    {
+    document.getElementById("myDiv").innerHTML=xmlhttp.responseText;
+    }
+  }
+xmlhttp.open("GET", "responsesNeutral.php",true);
+xmlhttp.send();
+
+</script>
+<script>
+function loadXMLDoc3()
+{
+var xmlhttp;
+if (window.XMLHttpRequest)
+  {// code for IE7+, Firefox, Chrome, Opera, Safari
+  xmlhttp=new XMLHttpRequest();
+  }
+else
+  {// code for IE6, IE5
+  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+  }
+xmlhttp.onreadystatechange=function()
+  {
+  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+    {
+    document.getElementById("myDiv").innerHTML=xmlhttp.responseText;
+    }
+  }
+xmlhttp.open("GET", "responsesUnsatisfied.php",true);
+xmlhttp.send();
+}
+</script>
+
+
+			<button type="button" onclick="loadXMLDoc1()"><img src="css/satisfied.png" border="0"width="30" height="30" class="satisfied" /> : Satisfied</button>  &nbsp 
+			<button type="button" onclick="loadXMLDoc2()"><img src="css/neutral.png" border="0"width="30" height="30" class="neutral" /> : Neutral</button> &nbsp
+			<button type="button" onclick="loadXMLDoc3()"><img src="css/not-satisfied.png" border="0"width="30" height="30" class="unsatisfied" /> :Unsatisfied</button>
+           
+        
+
+<table border= "0">
 <tr>
     <td>
-  <video id="example_video_1" class="video-js vjs-default-skin" controls preload="none" width="640" height="450"
+  <video id="example_video_1" class="video-js vjs-default-skin" controls preload="none" width="640" height="264"
        poster="http://video-js.zencoder.com/oceans-clip.png"
       data-setup="{}">
       
@@ -105,21 +183,22 @@ echo $_SESSION ['student_ID'];
 </div></td>
 
 <td>
-<table border=1 bgcolor="#6199df"><tr>
-<th width= 100 ><font color="white">Time</th>
-<th width= 290 ><font color="white">Comment</th>
-<th width= 233 ><font color="white">Published on</th></tr>
-</table>
-       <iframe src="commentbar.html" width="640" height= "430" ></iframe><br>
+<table border=1 width="600"><tr>
+<th width="96" bgcolor="#ACE5EE">Time</th>
+<th width="262" bgcolor="#ACE5EE">Comment</th>
+<th bgcolor="#ACE5EE">Published on</th></tr>
+<table><tr>
+<iframe src="script.html" width="600" height="350"></iframe></tr></table>
+       
 
-
+<table><tr>
 <!-- button for 'previous' page and 'next' page, and text area for 'go' to certain video time -->
-<input id="previous" type="button" value="Previous" />
+<input id="previous" type="button" value="Previous"/>
 
 <input id="inputTime" rows="1" cols="4" onkeypress="return isNumberKey(event);">
-<input type="submit" id="go" value="Go" />
+<input type="submit" id="go" value="Go">
 
-<input id="next" type="button" value="Next" />
+<input id="next" type="button" value="Next"/>
 
 <div id="checkTime"></div>  
 
@@ -239,7 +318,8 @@ Left:
 
 <div id = 'scrollBox'>
 <p id = 't'><p>
-</div>  </td></tr>
+</div></tr></table>
+</table>
 </table>
 
 </body>
