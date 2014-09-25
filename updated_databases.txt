@@ -1,0 +1,91 @@
+--
+-- MySQL 5.6.17
+-- Thu, 25 Sep 2014 13:27:04 +0000
+--
+
+CREATE TABLE `im3080_comment` (
+   `ID_num` int(10) unsigned not null,
+   `content` varchar(2000) not null,
+   `video_time` double not null,
+   `sending_date` varchar(10) not null,
+   `sending_time` varchar(10) not null,
+   `like_num` int(11) not null,
+   `dislike_num` int(11) not null,
+   `comment_ID` int(11) not null auto_increment,
+   `reply_ID` int(11) default '0',
+   `color` varchar(10) not null default '#000000',
+   `size` varchar(10) not null default 'middle',
+   `position` varchar(10) not null default 'top',
+   PRIMARY KEY (`comment_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=32;
+
+INSERT INTO `im3080_comment` (`ID_num`, `content`, `video_time`, `sending_date`, `sending_time`, `like_num`, `dislike_num`, `comment_ID`, `reply_ID`, `color`, `size`, `position`) VALUES 
+('1201', 'Testing this comment box', '327', '20140903', '16:25:10', '0', '0', '1', '0', '#000000', 'middle', 'top'),
+('1201', 'test2', '327', '20140903', '16:26:14', '0', '0', '2', '0', '#000000', 'middle', 'top'),
+('1201', 'test3', '327', '20140903', '16:28:10', '0', '0', '3', '0', '#000000', 'middle', 'top'),
+('0', 'test4', '327', '20140910', '15:16:01', '0', '0', '4', '0', '#000000', 'middle', 'top'),
+('0', 'test5', '327', '20140910', '15:17:18', '0', '0', '5', '0', '#000000', 'middle', 'top'),
+('0', 'test 6', '327', '20140910', '15:52:25', '0', '0', '6', '0', '#000000', 'middle', 'top'),
+('0', 'test7', '327', '20140910', '15:53:33', '0', '0', '7', '0', '#000000', 'middle', 'top'),
+('0', 'test8', '327', '20140910', '15:59:17', '0', '0', '8', '0', '#000000', 'middle', 'top'),
+('0', 'test9', '327', '20140910', '16:02:35', '0', '0', '9', '0', '#000000', 'middle', 'top'),
+('0', 'test10', '327', '20140910', '16:05:19', '0', '0', '10', '0', '#000000', 'middle', 'top'),
+('1234', 'test11', '327', '20140910', '16:07:47', '0', '0', '11', '0', '#000000', 'middle', 'top'),
+('1234', 'test12', '327', '20140910', '17:07:09', '0', '0', '12', '0', '#000000', 'middle', 'top'),
+('1200', 'test13', '327', '20140910', '17:12:17', '0', '0', '13', '0', '#000000', 'middle', 'top'),
+('1201', 'test', '1', '20140922', '12:45:49', '0', '0', '14', '0', '#000000', 'middle', 'top'),
+('1201', 'test2', '1', '20140922', '12:45:57', '0', '0', '15', '0', '#000000', 'middle', 'top'),
+('1201', 'test2', '1', '20140922', '12:46:01', '0', '0', '16', '0', '#000000', 'middle', 'top'),
+('1201', 'test4', '1', '20140922', '12:46:07', '0', '0', '17', '0', '#000000', 'middle', 'top'),
+('1201', 'test5', '1', '20140922', '12:46:19', '0', '0', '18', '0', '#000000', 'middle', 'top'),
+('1201', 'test6', '1', '20140922', '12:46:23', '0', '0', '19', '0', '#000000', 'middle', 'top'),
+('1201', 'test9', '6', '20140922', '12:46:33', '0', '0', '20', '0', '#000000', 'middle', 'top'),
+('1234', 'test ID number', '21', '20140922', '14:01:24', '0', '1', '21', '0', '#000000', 'middle', 'top'),
+('1201', 'orhdokkeee', '9', '20140922', '17:07:00', '2', '0', '22', '0', '#000000', 'middle', 'top'),
+('1201', 'test test tesing', '27', '20140924', '12:11:35', '0', '0', '23', '0', '#000000', 'middle', 'top'),
+('1201', 'hello', '27', '20140924', '12:19:05', '0', '0', '24', '0', '#000000', 'middle', 'top'),
+('1201', 'kshdf', '4', '20140924', '12:40:59', '0', '0', '25', '0', '#000000', 'middle', 'top'),
+('1201', 'try', '0', '20140924', '12:42:25', '0', '0', '26', '0', '#000000', 'middle', 'top'),
+('1201', 'jkgk', '11', '20140924', '15:39:13', '2', '0', '27', '0', '#000000', 'middle', 'top'),
+('1201', 'test reply', '6', '20140924', '15:57:16', '0', '0', '28', '20', '#000000', 'middle', 'top'),
+('1234', 'testing 5435', '13', '20140925', '17:53:30', '1', '0', '29', '0', '#000000', 'middle', 'top'),
+('1234', 'testing 5645747', '27', '20140925', '17:53:44', '0', '0', '30', '0', '#000000', 'middle', 'top'),
+('5678', 'ghdth', '21', '20140925', '20:42:29', '0', '0', '31', '21', '#000000', 'middle', 'top');
+
+CREATE TABLE `im3080_like` (
+   `ID_num` int(10) unsigned not null,
+   `comment_ID` int(11) not null,
+   `click_like` int(11) not null default '0',
+   `click_dislike` int(11) not null default '0'
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO `im3080_like` (`ID_num`, `comment_ID`, `click_like`, `click_dislike`) VALUES 
+('1201', '22', '1', '0'),
+('1201', '27', '1', '0'),
+('5678', '22', '1', '0'),
+('5678', '29', '1', '0'),
+('5678', '27', '1', '0'),
+('5678', '21', '0', '1');
+
+CREATE TABLE `im3080_responses` (
+   `ID_num` int(10) unsigned not null,
+   `satisfied` int(11) not null,
+   `neutral` int(11) not null,
+   `unsatisfied` int(11) not null
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO `im3080_responses` (`ID_num`, `satisfied`, `neutral`, `unsatisfied`) VALUES 
+('1234', '0', '0', '1');
+
+CREATE TABLE `userinfo` (
+   `student_ID` tinytext,
+   `password` tinytext,
+   `ID_num` int(11)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+INSERT INTO `userinfo` (`student_ID`, `password`, `ID_num`) VALUES 
+('x', '1', '0'),
+('l', '1', '0'),
+('liyan', '123456789', '0'),
+('xx', '11', '1234'),
+('yy', '22', '5678');
