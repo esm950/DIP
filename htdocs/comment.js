@@ -1,7 +1,8 @@
 
-function Comment(commentStr, time, currLength, currHeight, fontType, fontSize, color) {
+function Comment(commentStr, time, anno, currLength, currHeight, fontType, fontSize, color) {
     this.commentStr = commentStr;
     this.time = time;
+    this.anno = anno;
     this.currHeight = currHeight;
     this.currLength = currLength;
     this.fontType = fontType;
@@ -54,13 +55,20 @@ function Comment(commentStr, time, currLength, currHeight, fontType, fontSize, c
 		{
 
 			if(arrayC[1] > this.currHeight && arrayC[1] < this.currHeight+this.fontSize){
-			console.log(""+this.commentStr);
+			//console.log(""+this.commentStr);
+			if(this.anno == 1){		//check if it is annotation
 			return 0;
+			}
+			else
+			{
+				console.log(this.commentStr+" is not an anno");
+			}
 			}
 		}else
 		{return 1;}
 		
 	}
+	
 	
 	}
 

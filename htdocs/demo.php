@@ -83,7 +83,7 @@ $mysqli = new mysqli(DB_HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_DATABASE, DB_PORT
 $ID_video = 'im3080_comment'; //database name
 
 
-$mysqli->real_query('SELECT video_time, content, sending_date, sending_time, like_num, dislike_num FROM '.$ID_video .' ORDER BY video_time ASC')
+$mysqli->real_query('SELECT video_time, content, sending_date, sending_time, like_num, dislike_num, anno FROM '.$ID_video .' ORDER BY video_time ASC')
       or die("Error: SELECT failed: ({$mysqli->errno}) {$mysqli->error}");
 
 $resultSet = $mysqli->store_result()
@@ -95,6 +95,7 @@ $resultSet->close();  // Close the result set
 $currentArray = 0;	//counter for current displayed array on video
 $comment;
 $playTime;
+$anno;
 
 function tabulate_resultset($resultSet) {
   echo '<table border=1><tr>';
@@ -127,7 +128,9 @@ $counter = 0;
         
         $comment = $row['content'];
 		$temp[$counter][1] = $comment;
-		//echo ("<script>console.log(\"$temp[$counter][1]\");</script>");
+		$anno = $row['anno'];
+		$temp[$counter][2] = $anno;
+ 		//echo ("<script>console.log(\"$temp[$counter][1]\");</script>");
         echo"<td>",$comment,"</td>";		
         $date = intval($row['sending_date']);
         $day = $date%100;
@@ -185,6 +188,7 @@ if (!empty($_POST["comment"])){
 	 var isPaused = 0;
 	 var Comments = [];
 	 var anno , annoStyle;
+	 var myPlayer;
 	 
 
 
@@ -203,7 +207,7 @@ if (!empty($_POST["comment"])){
 
 	//html canvas init() end
 	
-   var myPlayer = videojs('example_video_1');
+   myPlayer = videojs('example_video_1');
    myPlayer.play();	//init displayComment loop
    myPlayer.pause();
    
@@ -212,7 +216,7 @@ if (!empty($_POST["comment"])){
    currVideoTime = myPlayer.currentTime();
 
    if(currVideoTime > arr[count][0] && currVideoTime < arr[count][0]+0.5){ // check current playing time with DB comment playTime. showing == true(run this only once)
-   var comment = new Comment(arr[count][1],arr[count][0],640,count*20+50,fontType,fontSize,colorCode);
+   var comment = new Comment(arr[count][1],arr[count][0],arr[count][2],640,count*20+50,fontType,fontSize,colorCode);
    Comments[count] = comment;
    //console.log(comment.commentStr);
    arr[count][3] = 640;			//position counter for this comment
@@ -301,6 +305,7 @@ function onCanvasClick(e) {
   	//console.log(i);
 	if(Comments[i].checkClicked(getCursorPosition(e))==0){
 		//alert("Clicked "+ Comments[i].getComment());
+		myPlayer.pause();
 		var url = 'http://www.google.com/search?q='+Comments[i].getComment();// url
 		var win = window.open(url, '_blank'); // change to get url when db done
 		win.focus();
