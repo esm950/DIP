@@ -174,7 +174,7 @@ if (!empty($_POST["comment"])){
 	 var height = 0;
      var count = 0;
 	 var colorCode = "#00ff00"; //variable to store color code from DB (must be a string)
-	 var fontSize = "20pt "; //variable to store font size from DB (must be a string)
+	 var fontSize = 20 //variable to store font size from DB (must be a string)
 	 var fontType = "Comic Sans MS" //variable to store font type from DB (must be a string)
 	 var can, ctx, step, delay = 20;
 	 var steps = 0;
@@ -215,7 +215,7 @@ if (!empty($_POST["comment"])){
    var comment = new Comment(arr[count][1],arr[count][0],640,count*20+50,fontType,fontSize,colorCode);
    Comments[count] = comment;
    //console.log(comment.commentStr);
-   //arr[count][3] = 640;			//position counter for this comment
+   arr[count][3] = 640;			//position counter for this comment
    height = count*20+50;
    if(height < 215) { //if height has not reached the end of the canvas
    arr[count][4] = count*20+50; //height counter for this comment
@@ -224,9 +224,9 @@ if (!empty($_POST["comment"])){
    arr[count][4] = (count*20+50) - 215; //once the position of the comment have reached the bottom of the canvas, position it at the top again
    comment.setHeight((count*20+50) - 215);
    }
-   noOfComment++;
-   endCommentIndex++;
-	  count ++;
+   noOfComment++;				//unused for now
+   endCommentIndex++;			//add one more comment to display in the displayComment()
+	  count ++;					
 	  }
 	 
 
@@ -259,7 +259,7 @@ function startComment(){
 function refreshTime(){
 	count = 0;
 	ctx.clearRect(0, 0, can.width, can.height);
-		 while(currVideoTime > arr[count][0] && currVideoTime < arr[count][0]+0.5){
+			 while(currVideoTime > arr[count][0]){
 		 
 	  count ++;
 	
@@ -298,9 +298,9 @@ function writeStatic(comment,width,height){
 function onCanvasClick(e) {
   	//alert(getCursorPosition(e));  //Check which comment is clicked.
   	for (var i = startCommentIndex; i < endCommentIndex && i >= startCommentIndex; i ++){
-  	console.log(i);
+  	//console.log(i);
 	if(Comments[i].checkClicked(getCursorPosition(e))==0){
-		alert("Clicked "+ Comments[i].getComment());
+		//alert("Clicked "+ Comments[i].getComment());
 	}				
 }
   }
