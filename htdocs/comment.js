@@ -50,10 +50,10 @@ function Comment(commentStr, time, currLength, currHeight, fontType, fontSize, c
 	//console.log("letter is at"+this.currLength+","+this.currHeight);
 	var charLength = this.commentStr.length;
 	
-		if(arrayC[0] > this.currLength && arrayC[0] < this.currLength+charLength*this.fontSize) // clicked x cord must be 0-150pixels from the first letter of comment
+		if(arrayC[0] > this.currLength && arrayC[0] < this.currLength+charLength*this.fontSize)
 		{
 
-			if(arrayC[1] > this.currHeight && arrayC[1] < this.currHeight+25){ //clicked y cord must be 0-25pixels from the first letter of comment ??
+			if(arrayC[1] > this.currHeight && arrayC[1] < this.currHeight+this.fontSize){
 			console.log(""+this.commentStr);
 			return 0;
 			}

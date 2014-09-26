@@ -301,6 +301,9 @@ function onCanvasClick(e) {
   	//console.log(i);
 	if(Comments[i].checkClicked(getCursorPosition(e))==0){
 		//alert("Clicked "+ Comments[i].getComment());
+		var url = 'http://www.google.com/search?q='+Comments[i].getComment();// url
+		var win = window.open(url, '_blank'); // change to get url when db done
+		win.focus();
 	}				
 }
   }
