@@ -83,7 +83,7 @@ $mysqli = new mysqli(DB_HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_DATABASE, DB_PORT
 $ID_video = 'im3080_comment'; //database name
 
 
-$mysqli->real_query('SELECT video_time, content, sending_date, sending_time, like_num, dislike_num, anno FROM '.$ID_video .' ORDER BY video_time ASC')
+$mysqli->real_query('SELECT video_time, content, sending_date, sending_time, like_num, dislike_num, isAnno FROM '.$ID_video .' ORDER BY video_time ASC')
       or die("Error: SELECT failed: ({$mysqli->errno}) {$mysqli->error}");
 
 $resultSet = $mysqli->store_result()
@@ -128,7 +128,7 @@ $counter = 0;
         
         $comment = $row['content'];
 		$temp[$counter][1] = $comment;
-		$anno = $row['anno'];
+		$anno = $row['isAnno'];
 		$temp[$counter][2] = $anno;
  		//echo ("<script>console.log(\"$temp[$counter][1]\");</script>");
         echo"<td>",$comment,"</td>";		
