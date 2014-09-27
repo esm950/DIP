@@ -83,7 +83,7 @@ $mysqli = new mysqli(DB_HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_DATABASE, DB_PORT
 $ID_video = 'im3080_comment'; //database name
 
 
-$mysqli->real_query('SELECT video_time, content, sending_date, sending_time, like_num, dislike_num, isAnno FROM '.$ID_video .' ORDER BY video_time ASC')
+$mysqli->real_query('SELECT video_time, content, sending_date, sending_time, like_num, dislike_num, size, color, isAnno, type FROM '.$ID_video .' ORDER BY video_time ASC')
       or die("Error: SELECT failed: ({$mysqli->errno}) {$mysqli->error}");
 
 $resultSet = $mysqli->store_result()
@@ -96,6 +96,9 @@ $currentArray = 0;	//counter for current displayed array on video
 $comment;
 $playTime;
 $anno;
+$color;
+$size;
+$type;
 
 function tabulate_resultset($resultSet) {
   echo '<table border=1><tr>';
@@ -130,6 +133,12 @@ $counter = 0;
 		$temp[$counter][1] = $comment;
 		$anno = $row['isAnno'];
 		$temp[$counter][2] = $anno;
+		$color = $row['color'];
+		$temp[$counter][3] = $color;
+		$size = $row['size'];
+		$temp[$counter][4] = $size;
+		$type = $row['type'];
+		$temp[$counter][5] = $type;
  		//echo ("<script>console.log(\"$temp[$counter][1]\");</script>");
         echo"<td>",$comment,"</td>";		
         $date = intval($row['sending_date']);
@@ -176,9 +185,8 @@ if (!empty($_POST["comment"])){
      var currVideoTime; //global var
 	 var height = 0;
      var count = 0;
-	 var colorCode = "#00ff00"; //variable to store color code from DB (must be a string)
-	 var fontSize = 20 //variable to store font size from DB (must be a string)
-	 var fontType = "Comic Sans MS" //variable to store font type from DB (must be a string)
+	 var fontSize = 20 // default font size variable
+	 var fontType = "" //font type variable
 	 var can, ctx, step, delay = 20;
 	 var steps = 0;
 	 var speed = 2;
@@ -216,7 +224,27 @@ if (!empty($_POST["comment"])){
    currVideoTime = myPlayer.currentTime();
 
    if(currVideoTime > arr[count][0] && currVideoTime < arr[count][0]+0.5){ // check current playing time with DB comment playTime. showing == true(run this only once)
-   var comment = new Comment(arr[count][1],arr[count][0],arr[count][2],640,count*20+50,fontType,fontSize,colorCode);
+   switch(arr[count][4]) {  //[4] = font size (value in char 'small', 'medium', 'large'
+	case 'small':
+		fontSize = 10 // font size small
+		break;
+	case 'large':
+		fontSize = 40 // font size large
+		break;
+	default:
+		fontSize = 20 // font size medium (default)
+   }
+   switch(arr[count][5]) { //[5] = font type (values 0, 1, 2)
+	case '1':
+		fontType = "WildWest"
+		break;
+	case '2':
+		fontType = "Comic sans MS"
+		break;
+	default:  //default value = 0
+		fontType = "Arial"
+	}
+   var comment = new Comment(arr[count][1],arr[count][0],arr[count][2],640,count*20+50,fontType,fontSize,arr[count][3]); //[0]= time  [1]= comment  [2]= anno  [3]= color
    Comments[count] = comment;
    //console.log(comment.commentStr);
    arr[count][3] = 640;			//position counter for this comment
