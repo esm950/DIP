@@ -33,7 +33,7 @@ while ($row = mysqli_fetch_array($resultCheck)) {
 </tr>
 </table>
 
-  <table border = 0 width = 75% align="center"> <tr>
+  <table border = 1 width = 75% align="center"> <tr>
  <th>Comments posted: </th>
  <th>Video Time </th>
   <th>Sending Date </th>
@@ -51,7 +51,14 @@ $resultComment=mysqli_query($link, $sqlStrComment);
 	echo "</tr>";
 	echo "<br>";}
  ?>
- 
+ <br>
+  <table border = 1 width = 75% align="center"> <tr>
+   <th>Comments liked: </th>
+  <th>Video Time </th>
+  <th>Sending Date </th>
+  <th>Sending Time </th>
+  </tr>
+
    <?php
 $sqlStrCommentID = "SELECT * FROM im3080_like WHERE ID_num = '$ID_num' AND click_like = 1";
 $resultCommentID=mysqli_query($link, $sqlStrCommentID);
@@ -59,14 +66,20 @@ while($row = mysqli_fetch_array($resultCommentID)){
    //echo $row['comment_ID'];
  $comment_ID = $row['comment_ID'];
 
-$sqlStrLike = "SELECT * FROM im3080_comment WHERE CommentID = '$comment_ID'";
+$sqlStrLike = "SELECT * FROM im3080_comment WHERE comment_ID = '$comment_ID'";
 $resultLike=mysqli_query($link, $sqlStrLike);
  while ($row = mysqli_fetch_array($resultLike)) {
-	echo  $row['content'];
+	echo "<tr>", "<td align=center>", $row['content'], "</td>";
+	echo "<td align=center>" , $row['video_time'], "</td>";
+	echo "<td align=center>" , $row['sending_date'], "</td>";
+	echo "<td align=center>" , $row['sending_time'], "</td>"; 
+	echo "</tr>";
+	echo "<br>";}
   echo "<br>";
-	}}
+	}
  ?>
- 
+
+ </table>
  </body>
  </html>
 
