@@ -125,7 +125,7 @@ $counter = 0;
         $time = (int)($time/60);
         $minute = $time%60;
         $time = (int)($time/60);
-        printf('<td>%02d:%02d:%02d</td>',$time,$minute,$second);
+        printf('<td><a href="javascript:void(0)" onclick="seekedVideo(%02d);">%02d:%02d:%02d</a></td>',$playTime,$time,$minute,$second);
         
         
         $comment = $row['content'];
@@ -275,6 +275,10 @@ if (!empty($_POST["comment"])){
             // Different function for events
 function setVideoTime (){
 document.getElementById("VT").value = Math.floor(currVideoTime);
+}
+
+function seekedVideo(seconds) {
+myPlayer.currentTime(seconds);
 }
 
 function stopComment(){
