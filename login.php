@@ -18,9 +18,11 @@
 
   <div class="login-card">
     <h1>Log-in</h1><br>
-  <form name="form1" method="post" action="check_login_success.php">
-    <input type="text" name="mystudent_ID" placeholder="Username">
-    <input type="password" name="mypassword" placeholder="Password">
+  <form name="form1" method="post" action="checkLogin.php">
+    <input type="radio" name="usertype" value="student" checked/> Student
+    <input type="radio" name="usertype" value="prof" /> Professor    
+    <input type="text" name="user_ID" placeholder="Username">
+    <input type="password" name="password" placeholder="Password">
     <input type="submit" name="login" class="login login-submit" value="login">
   </form>
 
