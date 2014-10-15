@@ -8,7 +8,7 @@ function Comment(commentStr, time, anno, currLength, currHeight, fontType, fontS
     this.fontType = fontType;
     this.fontSize = fontSize;
     this.color = color;
-
+	
 	this.move = function(speed){
 		this.currLength = this.currLength - speed;
 
@@ -36,9 +36,6 @@ function Comment(commentStr, time, anno, currLength, currHeight, fontType, fontS
 		
 	}
 	this.getFont = function(){
-	//console.log("20pt "+this.fontType);
-	//console.log(this.fontSize+"pt "+this.fontType);
-	//return "20pt "+this.fontType;
 	return this.fontSize+"pt "+this.fontType;
 		
 		
@@ -46,15 +43,30 @@ function Comment(commentStr, time, anno, currLength, currHeight, fontType, fontS
 	this.getComment = function(){
 		return this.commentStr;
 	}
+	
+		this.isAnno = function(){
+		return this.anno;
+	}
+	
+	this.getPixelLength = function(){	//Length of comment in pixel
+		var charLength = this.commentStr.length;
+		console.log(charLength);
+		return charLength*this.fontSize*70/100;
+		
+	}
+	
+	this.getPixelHeight = function(){	//Height of comment in pixel
+		return this.fontSize;
+	}
+	
+	
 	this.checkClicked = function(arrayC){
-	//console.log("i clicked at "+arrayC[0]+","+arrayC[1]);
-	//console.log("letter is at"+this.currLength+","+this.currHeight);
 	var charLength = this.commentStr.length;
 	
-		if(arrayC[0] > this.currLength && arrayC[0] < this.currLength+charLength*this.fontSize)
+		if(arrayC[0] > this.currLength && arrayC[0] < this.currLength+this.getPixelLength())
 		{
 
-			if(arrayC[1] > this.currHeight && arrayC[1] < this.currHeight+this.fontSize){
+			if(arrayC[1] > this.currHeight && arrayC[1] < this.currHeight+this.getPixelHeight()){
 			//console.log(""+this.commentStr);
 			if(this.anno == 1){		//check if it is annotation
 			return 0;
@@ -71,5 +83,4 @@ function Comment(commentStr, time, anno, currLength, currHeight, fontType, fontS
 	
 	
 	}
-
 

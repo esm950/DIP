@@ -30,10 +30,11 @@
 
 </div>
  <video id="example_video_1" class="video-js vjs-default-skin" controls preload="none" width="640" height="264" 		
-      poster="2.png"
+      poster="http://video-js.zencoder.com/oceans-clip.png"
       data-setup="{}">
-          <source src="2.mp4" type='video/mp4' />
-    
+          <source src="http://video-js.zencoder.com/oceans-clip.mp4" type='video/mp4' />
+    <source src="http://video-js.zencoder.com/oceans-clip.webm" type='video/webm' />
+    <source src="http://video-js.zencoder.com/oceans-clip.ogv" type='video/ogg' />
     <track kind="captions" src="demo.captions.vtt" srclang="en" label="English"></track><!-- Tracks need an ending tag thanks to IE9 -->
     <track kind="subtitles" src="demo.captions.vtt" srclang="en" label="English"></track><!-- Tracks need an ending tag thanks to IE9 -->
     
@@ -125,7 +126,7 @@ $counter = 0;
         $time = (int)($time/60);
         $minute = $time%60;
         $time = (int)($time/60);
-        printf('<td><a href="javascript:void(0)" onclick="seekedVideo(%02d);">%02d:%02d:%02d</a></td>',$playTime,$time,$minute,$second);
+        printf('<td>%02d:%02d:%02d</td>',$time,$minute,$second);
         
         
         $comment = $row['content'];
@@ -133,11 +134,11 @@ $counter = 0;
 		$anno = $row['isAnno'];
 		$temp[$counter][2] = $anno;
 		$color = $row['color'];
-		$temp[$counter][5] = $color;
+		$temp[$counter][3] = $color;
 		$size = $row['size'];
-		$temp[$counter][6] = $size;
+		$temp[$counter][4] = $size;
 		$type = $row['type'];
-		$temp[$counter][7] = $type;
+		$temp[$counter][5] = $type;
  		//echo ("<script>console.log(\"$temp[$counter][1]\");</script>");
         echo"<td>",$comment,"</td>";		
         $date = intval($row['sending_date']);
@@ -223,7 +224,7 @@ if (!empty($_POST["comment"])){
    currVideoTime = myPlayer.currentTime();
 
    if(currVideoTime > arr[count][0] && currVideoTime < arr[count][0]+0.5){ // check current playing time with DB comment playTime. showing == true(run this only once)
-   switch(arr[count][6]) {  //[6] = font size (value in char 'small', 'medium', 'large'
+   switch(arr[count][4]) {  //[4] = font size (value in char 'small', 'medium', 'large'
 	case 'small':
 		fontSize = 10 // font size small
 		break;
@@ -233,7 +234,7 @@ if (!empty($_POST["comment"])){
 	default:
 		fontSize = 20 // font size medium (default)
    }
-   switch(arr[count][7]) { //[7] = font type (values 0, 1, 2)
+   switch(arr[count][5]) { //[5] = font type (values 0, 1, 2)
 	case '1':
 		fontType = "WildWest"
 		break;
@@ -243,7 +244,7 @@ if (!empty($_POST["comment"])){
 	default:  //default value = 0
 		fontType = "Arial"
 	}
-   var comment = new Comment(arr[count][1],arr[count][0],arr[count][2],640,count*20+50,fontType,fontSize,arr[count][5]); //[0]= time  [1]= comment  [2]= anno  [5]= color
+   var comment = new Comment(arr[count][1],arr[count][0],arr[count][2],640,count*20+50,fontType,fontSize,arr[count][3]); //[0]= time  [1]= comment  [2]= anno  [3]= color
    Comments[count] = comment;
    //console.log(comment.commentStr);
    arr[count][3] = 640;			//position counter for this comment
@@ -277,10 +278,6 @@ function setVideoTime (){
 document.getElementById("VT").value = Math.floor(currVideoTime);
 }
 
-function seekedVideo(seconds) {
-myPlayer.currentTime(seconds);
-}
-
 function stopComment(){
 	if(isPaused == 0)
 	isPaused = 1;
@@ -308,19 +305,27 @@ function displayComment() {	//	generic function to display comment
             if(isPaused == 0){
             
             ctx.clearRect(0, 0, can.width, can.height);
+            //ctx.width = ctx.width;
             ctx.save();								//save style and font and clear canvas
             for (var i = startCommentIndex; i < endCommentIndex && i >= startCommentIndex; i ++){
               if (Comments[i].getLength() < steps){					//if comment at end of video frame, stop displaying the comment      
                 startCommentIndex++;
                 //arr[i][3] = 640;             		  //set default position to right if end of frame 
                 }
-				
+			//console.log("Number i = "+i+"color is : "+Comments[i].getColor()+"Font is :"+Comments[i].getFont());
+			//if(Comment[i].getReply != 1){} //Meaning comment is not a reply to another reply, display it
+			if(Comments[i].isAnno() == 1){
+				ctx.beginPath();
+				ctx.rect(Comments[i].getLength(),Comments[i].getHeight()-Comments[i].getPixelHeight()/2,Comments[i].getPixelLength(),Comments[i].getPixelHeight());
+				ctx.strokeStyle="#FF0000";
+				ctx.stroke();
+			}
             ctx.fillStyle = Comments[i].getColor();
             ctx.font = Comments[i].getFont(); //font of different comments				
             writeStatic(Comments[i].getComment(),Comments[i].getLength(),Comments[i].getHeight());				//print comment on current position          
             Comments[i].move(speed);				// minus the current position to the left
             }
-            ctx.restore();            				//load the style back to text
+            ctx.restore();           				//load the style back to text
             var t = setTimeout('displayComment()', delay);
         }
         
