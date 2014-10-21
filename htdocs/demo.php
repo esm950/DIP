@@ -33,7 +33,7 @@
       poster="2.png"
       data-setup="{}">
           <source src="2.mp4" type='video/mp4' />
-    
+		  
     <track kind="captions" src="demo.captions.vtt" srclang="en" label="English"></track><!-- Tracks need an ending tag thanks to IE9 -->
     <track kind="subtitles" src="demo.captions.vtt" srclang="en" label="English"></track><!-- Tracks need an ending tag thanks to IE9 -->
     
@@ -82,7 +82,7 @@ $mysqli = new mysqli(DB_HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_DATABASE, DB_PORT
 $ID_video = 'im3080_comment'; //database name
 
 
-$mysqli->real_query('SELECT video_time, content, sending_date, sending_time, like_num, dislike_num, size, color, isAnno, type FROM '.$ID_video .' ORDER BY video_time ASC')
+$mysqli->real_query('SELECT video_time, content, sending_date, sending_time, like_num, dislike_num, size, color, isAnno, position FROM '.$ID_video .' ORDER BY video_time ASC')
       or die("Error: SELECT failed: ({$mysqli->errno}) {$mysqli->error}");
 
 $resultSet = $mysqli->store_result()
@@ -97,7 +97,8 @@ $playTime;
 $anno;
 $color;
 $size;
-$type;
+//$type;
+$position;
 
 function tabulate_resultset($resultSet) {
   echo '<table border=1><tr>';
@@ -125,8 +126,8 @@ $counter = 0;
         $time = (int)($time/60);
         $minute = $time%60;
         $time = (int)($time/60);
+        //printf('<td>%02d:%02d:%02d</td>',$time,$minute,$second);
         printf('<td><a href="javascript:void(0)" onclick="seekedVideo(%02d);">%02d:%02d:%02d</a></td>',$playTime,$time,$minute,$second);
-        
         
         $comment = $row['content'];
 		$temp[$counter][1] = $comment;
@@ -136,9 +137,11 @@ $counter = 0;
 		$temp[$counter][5] = $color;
 		$size = $row['size'];
 		$temp[$counter][6] = $size;
-		$type = $row['type'];
-		$temp[$counter][7] = $type;
+		//$type = $row['type'];
+		//$temp[$counter][7] = $type;
  		//echo ("<script>console.log(\"$temp[$counter][1]\");</script>");
+		$position = $row['position'];
+		$temp[$counter][7] = $position;
         echo"<td>",$comment,"</td>";		
         $date = intval($row['sending_date']);
         $day = $date%100;
@@ -184,8 +187,10 @@ if (!empty($_POST["comment"])){
      var currVideoTime; //global var
 	 var height = 0;
      var count = 0;
+	 var tHeightCounter = 0;
+	 var bHeightCounter = 0;
 	 var fontSize = 20 // default font size variable
-	 var fontType = "" //font type variable
+	 var fontType = "Arial" //font type variable
 	 var can, ctx, step, delay = 20;
 	 var steps = 0;
 	 var speed = 2;
@@ -233,32 +238,38 @@ if (!empty($_POST["comment"])){
 	default:
 		fontSize = 20 // font size medium (default)
    }
-   switch(arr[count][7]) { //[7] = font type (values 0, 1, 2)
-	case '1':
-		fontType = "WildWest"
-		break;
-	case '2':
-		fontType = "Comic sans MS"
-		break;
-	default:  //default value = 0
-		fontType = "Arial"
-	}
+ 
    var comment = new Comment(arr[count][1],arr[count][0],arr[count][2],640,count*20+50,fontType,fontSize,arr[count][5]); //[0]= time  [1]= comment  [2]= anno  [5]= color
    Comments[count] = comment;
-   //console.log(comment.commentStr);
    arr[count][3] = 640;			//position counter for this comment
-   height = count*20+50;
-   if(height < 215) { //if height has not reached the end of the canvas
-   arr[count][4] = count*20+50; //height counter for this comment
-   comment.setHeight(count*20+50);
-   } else {
-   arr[count][4] = (count*20+50) - 215; //once the position of the comment have reached the bottom of the canvas, position it at the top again
-   comment.setHeight((count*20+50) - 215);
-   }
-   noOfComment++;				//unused for now
-   endCommentIndex++;			//add one more comment to display in the displayComment()
-	  count ++;					
-	  }
+   if(arr[count][7] == 'top') { //comments marked 'top' will flow top down
+		height = tHeightCounter*20+50;
+		if(height < 215) { //if height has not reached the end of the canvas
+			arr[count][4] = tHeightCounter*20+50; //height counter for this comment
+			comment.setHeight(tHeightCounter*20+50);
+		} else {
+			tHeightCounter = 0;
+			arr[count][4] = tHeightCounter*20+50; //once the position of the comment have reached the bottom of the canvas, position it at the top again
+			comment.setHeight(tHeightCounter*20+50);
+		}
+		tHeightCounter++;
+	} else { // comments marked 'bottom' will flow bottom up
+		height = 255 - (bHeightCounter*20+50);
+		if(height > 50) {
+			arr[count][4] = 255 - (bHeightCounter*20+50);
+			comment.setHeight(255 - (bHeightCounter*20+50));
+		} else { //once the position of the comment have reached the top of the canvas, position it at the bottom again
+			bHeightCounter = 0;
+			arr[count][4] = 255 - (bHeightCounter*20+50);
+			comment.setHeight(255 - (bHeightCounter*20+50));
+		}
+		bHeightCounter++;
+	}
+	noOfComment++;				//unused for now
+	endCommentIndex++;			//add one more comment to display in the displayComment()
+	count++;	
+	
+	}
 	 
 
    }
@@ -308,19 +319,27 @@ function displayComment() {	//	generic function to display comment
             if(isPaused == 0){
             
             ctx.clearRect(0, 0, can.width, can.height);
+            //ctx.width = ctx.width;
             ctx.save();								//save style and font and clear canvas
             for (var i = startCommentIndex; i < endCommentIndex && i >= startCommentIndex; i ++){
               if (Comments[i].getLength() < steps){					//if comment at end of video frame, stop displaying the comment      
                 startCommentIndex++;
                 //arr[i][3] = 640;             		  //set default position to right if end of frame 
                 }
-				
+			//console.log("Number i = "+i+"color is : "+Comments[i].getColor()+"Font is :"+Comments[i].getFont());
+			//if(Comment[i].getReply != 1){} //Meaning comment is not a reply to another reply, display it
+			if(Comments[i].isAnno() == 1){
+				ctx.beginPath();
+				ctx.rect(Comments[i].getLength(),Comments[i].getHeight()-Comments[i].getPixelHeight()/2,Comments[i].getPixelLength(),Comments[i].getPixelHeight());
+				ctx.strokeStyle="#FF0000";
+				ctx.stroke();
+			}
             ctx.fillStyle = Comments[i].getColor();
             ctx.font = Comments[i].getFont(); //font of different comments				
             writeStatic(Comments[i].getComment(),Comments[i].getLength(),Comments[i].getHeight());				//print comment on current position          
             Comments[i].move(speed);				// minus the current position to the left
             }
-            ctx.restore();            				//load the style back to text
+            ctx.restore();           				//load the style back to text
             var t = setTimeout('displayComment()', delay);
         }
         
