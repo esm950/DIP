@@ -50,7 +50,7 @@ function Comment(commentStr, time, anno, currLength, currHeight, fontType, fontS
 	
 	this.getPixelLength = function(){	//Length of comment in pixel
 		var charLength = this.commentStr.length;
-		console.log(charLength);
+		//console.log("char pixel length = " +charLength*this.fontSize*70/100);
 		return charLength*this.fontSize*70/100;
 		
 	}
@@ -62,12 +62,14 @@ function Comment(commentStr, time, anno, currLength, currHeight, fontType, fontS
 	
 	this.checkClicked = function(arrayC){
 	var charLength = this.commentStr.length;
-	
-		if(arrayC[0] > this.currLength && arrayC[0] < this.currLength+this.getPixelLength())
-		{
-
-			if(arrayC[1] > this.currHeight && arrayC[1] < this.currHeight+this.getPixelHeight()){
-			//console.log(""+this.commentStr);
+		
+		if(arrayC[0] > 224+ this.currLength && arrayC[0] < 224+this.currLength+this.getPixelLength())
+		{	
+			//console.log("y="+this.currHeight);
+			//console.log(this.commentStr +"("+arrayC[0]+") x more than "+(220+ this.currLength) +" less than "+(220+this.currLength+this.getPixelLength()));
+			//console.log(this.commentStr+"("+arrayC[1]+") y more than "+(121+this.currHeight+this.getPixelHeight()));
+			if(arrayC[1] > 121+this.currHeight-this.getPixelHeight()/2 && arrayC[1] < 121+this.currHeight+this.getPixelHeight()/2){
+			
 			if(this.anno == 1){		//check if it is annotation
 			return 0;
 			}
