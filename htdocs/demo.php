@@ -40,6 +40,7 @@
 	<p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading to a web browser that <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a></p>
   
   </video>
+  <input type="checkbox" name="c1" onclick="showMe('overlay')">Off Captions	
 					
 <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']);?>" method="post" onSubmit="setVideoTime()">
 Comment: <br><textarea type="text" name="comment" placeholder="Maximum 200 words..." rows="3" cols="40" wrap=PHYSICAL onKeyDown="gbcount(this.form.comment,this.form.total,this.form.used,this.form.remain);" onKeyUp="gbcount(this.form.comment,this.form.total,this.form.used,this.form.remain);"></textarea>
@@ -182,6 +183,22 @@ if (!empty($_POST["comment"])){
 
 
   <script type="text/javascript">
+  
+  function showMe(box) {
+        
+        var chboxs = document.getElementsByName("c1");
+        var vis = "block";
+        for(var i=0;i<chboxs.length;i++) { 
+            if(chboxs[i].checked){
+             vis = "none";
+                break;
+            }
+        
+        }
+     document.getElementById(box).style.display = vis;
+    
+    }
+
 	  //init starting variable
 	var arr = <?php echo json_encode($temp); ?>;
      var currVideoTime; //global var
