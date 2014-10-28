@@ -691,7 +691,7 @@ easily in the skin designer. http://designer.videojs.com/
   box-shadow: -0.2em -0.2em 0.3em rgba(255, 255, 255, 0.2);
 }
 .vjs-default-skin .vjs-menu-button:hover .vjs-menu {
-  display: block;
+  display: none; 
 }
 .vjs-default-skin .vjs-menu-button ul li {
   list-style: none;
@@ -731,10 +731,12 @@ easily in the skin designer. http://designer.videojs.com/
 }
 /* Subtitles Button */
 .vjs-default-skin .vjs-subtitles-button:before {
+display: none;
   content: "\e00c";
 }
 /* Captions Button */
-.vjs-default-skin .vjs-captions-button:before {
+.vjs-default-skin .vjs-captions-button: {
+display: none; 
   content: "\e008";
 }
 /* Chapters Button */
@@ -749,6 +751,7 @@ easily in the skin designer. http://designer.videojs.com/
 .vjs-default-skin .vjs-captions-button:focus .vjs-control-content:before,
 .vjs-default-skin .vjs-captions-button:hover .vjs-control-content:before {
   /* box-shadow */
+  
   -webkit-box-shadow: 0 0 1em #ffffff;
   -moz-box-shadow: 0 0 1em #ffffff;
   box-shadow: 0 0 1em #ffffff;
