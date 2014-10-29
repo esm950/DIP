@@ -1,13 +1,14 @@
 
-function Comment(commentStr, time, currLength, currHeight, fontType, fontSize, color) {
+function Comment(commentStr, time, anno, currLength, currHeight, fontType, fontSize, color) {
     this.commentStr = commentStr;
     this.time = time;
+    this.anno = anno;
     this.currHeight = currHeight;
     this.currLength = currLength;
     this.fontType = fontType;
     this.fontSize = fontSize;
     this.color = color;
-
+	
 	this.move = function(speed){
 		this.currLength = this.currLength - speed;
 
@@ -35,9 +36,6 @@ function Comment(commentStr, time, currLength, currHeight, fontType, fontSize, c
 		
 	}
 	this.getFont = function(){
-	//console.log("20pt "+this.fontType);
-	//console.log(this.fontSize+"pt "+this.fontType);
-	//return "20pt "+this.fontType;
 	return this.fontSize+"pt "+this.fontType;
 		
 		
@@ -45,23 +43,46 @@ function Comment(commentStr, time, currLength, currHeight, fontType, fontSize, c
 	this.getComment = function(){
 		return this.commentStr;
 	}
-	this.checkClicked = function(arrayC){
-	//console.log("i clicked at "+arrayC[0]+","+arrayC[1]);
-	//console.log("letter is at"+this.currLength+","+this.currHeight);
-	var charLength = this.commentStr.length;
 	
-		if(arrayC[0] > this.currLength && arrayC[0] < this.currLength+charLength*this.fontSize)
-		{
-
-			if(arrayC[1] > this.currHeight && arrayC[1] < this.currHeight+this.fontSize){
-			console.log(""+this.commentStr);
+		this.isAnno = function(){
+		return this.anno;
+	}
+	
+	this.getPixelLength = function(){	//Length of comment in pixel
+		var charLength = this.commentStr.length;
+		//console.log("char pixel length = " +charLength*this.fontSize*70/100);
+		return charLength*this.fontSize*70/100;
+		
+	}
+	
+	this.getPixelHeight = function(){	//Height of comment in pixel
+		return this.fontSize;
+	}
+	
+	
+	this.checkClicked = function(arrayC){
+	var charLength = this.commentStr.length;
+		
+		if(arrayC[0] > 224+ this.currLength && arrayC[0] < 224+this.currLength+this.getPixelLength())
+		{	
+			//console.log("y="+this.currHeight);
+			//console.log(this.commentStr +"("+arrayC[0]+") x more than "+(220+ this.currLength) +" less than "+(220+this.currLength+this.getPixelLength()));
+			//console.log(this.commentStr+"("+arrayC[1]+") y more than "+(121+this.currHeight+this.getPixelHeight()));
+			if(arrayC[1] > 121+this.currHeight-this.getPixelHeight()/2 && arrayC[1] < 121+this.currHeight+this.getPixelHeight()/2){
+			
+			if(this.anno == 1){		//check if it is annotation
 			return 0;
+			}
+			else
+			{
+				console.log(this.commentStr+" is not an anno");
+			}
 			}
 		}else
 		{return 1;}
 		
 	}
 	
+	
 	}
-
 

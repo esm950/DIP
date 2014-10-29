@@ -222,7 +222,7 @@ $mysqli = new mysqli(DB_HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_DATABASE, DB_PORT
 $ID_video = 'im3080_comment'; //database name
 
 
-$mysqli->real_query('SELECT video_time, content, sending_date, sending_time, like_num, dislike_num, size, color, isAnno, position FROM '.$ID_video .' ORDER BY video_time ASC')
+$mysqli->real_query('SELECT video_time, content, sending_date, sending_time, like_num, dislike_num, size, color, isAnno, position,link FROM '.$ID_video .' ORDER BY video_time ASC')
       or die("Error: SELECT failed: ({$mysqli->errno}) {$mysqli->error}");
 
 $resultSet = $mysqli->store_result()
@@ -237,6 +237,7 @@ $playTime;
 $anno;
 $color;
 $size;
+$link;
 //$type;
 $position;
 
@@ -267,7 +268,7 @@ $counter = 0;
         $minute = $time%60;
         $time = (int)($time/60);
         //printf('<td>%02d:%02d:%02d</td>',$time,$minute,$second);
-        printf('<td><a href="javascript:void(0)" onclick="seekedVideo(%02d);">%02d:%02d:%02d</a></td>',$playTime,$time,$minute,$second);
+       // printf('<td><a href="javascript:void(0)" onclick="seekedVideo(%02d);">%02d:%02d:%02d</a></td>',$playTime,$time,$minute,$second);
         
         $comment = $row['content'];
 		$temp[$counter][1] = $comment;
@@ -277,11 +278,10 @@ $counter = 0;
 		$temp[$counter][5] = $color;
 		$size = $row['size'];
 		$temp[$counter][6] = $size;
-		//$type = $row['type'];
-		//$temp[$counter][7] = $type;
- 		//echo ("<script>console.log(\"$temp[$counter][1]\");</script>");
 		$position = $row['position'];
 		$temp[$counter][7] = $position;
+		$link = $row['link'];
+		$temp[$counter][8] = $link;
         echo"<td>",$comment,"</td>";		
         $date = intval($row['sending_date']);
         $day = $date%100;
@@ -380,7 +380,7 @@ if (!empty($_POST["comment"])){
 											fontSize = 20 // font size medium (default)
 										}
  
-   var comment = new Comment(arr[count][1],arr[count][0],arr[count][2],640,count*20+50,fontType,fontSize,arr[count][5]); //[0]= time  [1]= comment  [2]= anno  [5]= color
+   var comment = new Comment(arr[count][1],arr[count][0],arr[count][2],640,count*20+50,fontType,fontSize,arr[count][5],arr[count][8]); //[0]= time  [1]= comment  [2]= anno  [5]= color
    Comments[count] = comment;
    arr[count][3] = 640;			//position counter for this comment
    if(arr[count][7] == 'top') { //comments marked 'top' will flow top down
@@ -498,9 +498,13 @@ function onCanvasClick(e) {
 	if(Comments[i].checkClicked(getCursorPosition(e))==0){
 		//alert("Clicked "+ Comments[i].getComment());
 		myPlayer.pause();
-		var url = 'http://www.google.com/search?q='+Comments[i].getComment();// url
+		if(Comments[i].getLink() == ''){
+			alert("There is no link");
+		}else{
+		var url = 'http://www.google.com/search?q='+Comments[i].getLink();// url
 		var win = window.open(url, '_blank'); // change to get url when db done
 		win.focus();
+		}
 	}				
 }
   }
