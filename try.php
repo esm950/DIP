@@ -501,7 +501,7 @@ function onCanvasClick(e) {
 		if(Comments[i].getLink() == ''){
 			alert("There is no link");
 		}else{
-		var url = 'http://www.google.com/search?q='+Comments[i].getLink();// url
+		var url = 'http://'+Comments[i].getLink();// url
 		var win = window.open(url, '_blank'); // change to get url when db done
 		win.focus();
 		}
