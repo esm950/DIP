@@ -1,5 +1,5 @@
 
-function Comment(commentStr, time, anno, currLength, currHeight, fontType, fontSize, color, link,id) {
+function Comment(commentStr, time, anno, currLength, currHeight, fontType, fontSize, color, link) {
     this.commentStr = commentStr;
     this.time = time;
     this.anno = anno;
@@ -8,8 +8,7 @@ function Comment(commentStr, time, anno, currLength, currHeight, fontType, fontS
     this.fontType = fontType;
     this.fontSize = fontSize;
     this.color = color;
-    this.link = link;
-    this.id = id;
+    this.link = link
 	
 	this.move = function(speed){
 		this.currLength = this.currLength - speed;
@@ -50,10 +49,6 @@ function Comment(commentStr, time, anno, currLength, currHeight, fontType, fontS
 		return this.link;
 	}
 	
-	this.getID = function(){
-		return this.id;
-	}
-	
 		this.isAnno = function(){
 		return this.anno;
 	}
@@ -77,7 +72,7 @@ function Comment(commentStr, time, anno, currLength, currHeight, fontType, fontS
 		if(arrayC[0] > this.currLength && arrayC[0] < this.currLength+this.getPixelLength())
 		{	
 			//console.log("y="+this.currHeight);
-			//console.log(this.commentStr+"y more than "+(this.currHeight-this.getPixelHeight()/2) +" less than "+(this.currHeight+this.getPixelHeight()/2));
+			console.log(this.commentStr+"y more than "+(this.currHeight-this.getPixelHeight()/2) +" less than "+(this.currHeight+this.getPixelHeight()/2));
 			if(arrayC[1] > this.currHeight-this.getPixelHeight()/2 && arrayC[1] < this.currHeight+this.getPixelHeight()/2){
 			
 			if(this.anno == 1){		//check if it is annotation
@@ -85,7 +80,7 @@ function Comment(commentStr, time, anno, currLength, currHeight, fontType, fontS
 			}
 			else
 			{
-				//console.log(this.commentStr+" is not an anno");
+				console.log(this.commentStr+" is not an anno");
 			}
 			}
 		}else

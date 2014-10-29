@@ -3,7 +3,7 @@ session_start();
 
 // Check if session is not registered, redirect back to main page.
 //Put this code in first line of web page.
-if(!isset($_SESSION['student_ID'])){
+if(!isset($_SESSION['ID_num'])){	
 	header("location:login.php");
 }
 
@@ -223,7 +223,7 @@ $mysqli = new mysqli(DB_HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_DATABASE, DB_PORT
 $ID_video = 'im3080_comment'; //database name
 
 
-$mysqli->real_query('SELECT video_time, content, sending_date, sending_time, like_num, dislike_num, size, color, isAnno, position,link FROM '.$ID_video .' ORDER BY video_time ASC')
+$mysqli->real_query('SELECT video_time, content, sending_date, sending_time, like_num, dislike_num, size, color, isAnno, position,link,ID_num FROM '.$ID_video .' ORDER BY video_time ASC')
       or die("Error: SELECT failed: ({$mysqli->errno}) {$mysqli->error}");
 
 $resultSet = $mysqli->store_result()
@@ -241,6 +241,8 @@ $size;
 $link;
 //$type;
 $position;
+$block;
+$id;
 
 function tabulate_resultset($resultSet) {
   echo '<table hidden border=1><tr>';
@@ -253,6 +255,8 @@ echo "<th>Dislike</th>";
 echo '</tr>';
   
 global $temp;
+global $blockArray;
+$blockArray = array();
 $temp = array();
 $counter = 0;
   // Fetch each row and print table detail row
@@ -283,6 +287,8 @@ $counter = 0;
 		$temp[$counter][7] = $position;
 		$link = $row['link'];
 		$temp[$counter][8] = $link;
+		$id = $row['ID_num'];
+		$temp[$counter][9] = $id;
         echo"<td>",$comment,"</td>";		
         $date = intval($row['sending_date']);
         $day = $date%100;
@@ -298,6 +304,37 @@ $counter = 0;
     }
     echo '</table>';
 }
+
+
+//BLOCK USER
+
+      //printf('SELECT ID_num FROM '. 'user' .$_SESSION['ID_num']. '_block');
+      
+$mysqli->real_query('SELECT ID_num FROM '. 'user' .$_SESSION['ID_num']. '_block')
+      or die("Error: SELECT failed: ({$mysqli->errno}) {$mysqli->error}");
+
+$resultSet = $mysqli->store_result()
+      or die("Error: Store resultset failed: ({$mysqli->errno}) {$mysqli->error}");
+     
+
+
+
+$counter = 0;
+
+foreach ($resultSet as $row) {
+$block= $row['ID_num'];
+$blockArray[$counter] = $block;
+$counter ++;
+}
+
+$resultSet->close();  // Close the result set
+
+
+
+
+
+
+
 
 
 if (!empty($_POST["comment"])){
@@ -340,6 +377,7 @@ if (!empty($_POST["comment"])){
 									
 									//init starting variable
 									var arr = <?php echo json_encode($temp); ?>;
+									var block = <?php echo json_encode($blockArray); ?>;
 									var currVideoTime; //global var
 									var height = 0;
 									var count = 0;
@@ -397,7 +435,7 @@ if (!empty($_POST["comment"])){
 											fontSize = 20 // font size medium (default)
 										}
  
-   var comment = new Comment(arr[count][1],arr[count][0],arr[count][2],640,count*20+50,fontType,fontSize,arr[count][5],arr[count][8]); //[0]= time  [1]= comment  [2]= anno  [5]= color
+   var comment = new Comment(arr[count][1],arr[count][0],arr[count][2],640,count*20+50,fontType,fontSize,arr[count][5],arr[count][8],arr[count][9]); //[0]= time  [1]= comment  [2]= anno  [5]= color
    Comments[count] = comment;
    arr[count][3] = 640;			//position counter for this comment
    if(arr[count][7] == 'top') { //comments marked 'top' will flow top down
@@ -486,6 +524,7 @@ function displayComment() {	//	generic function to display comment
                 }
 			//console.log("Number i = "+i+"color is : "+Comments[i].getColor()+"Font is :"+Comments[i].getFont());
 			//if(Comment[i].getReply != 1){} //Meaning comment is not a reply to another reply, display it
+			if(checkBlocked(Comments[i].getID())== 0){	
 			if(Comments[i].isAnno() == 1){
 				ctx.beginPath();
 				//console.log("x = "+Comments[i].getLength()+"y= "+Comments[i].getHeight()-Comments[i].getPixelHeight()/2);
@@ -494,8 +533,10 @@ function displayComment() {	//	generic function to display comment
 				ctx.stroke();
 			}
             ctx.fillStyle = Comments[i].getColor();
-            ctx.font = Comments[i].getFont(); //font of different comments				
-            writeStatic(Comments[i].getComment(),Comments[i].getLength(),Comments[i].getHeight());				//print comment on current position          
+            ctx.font = Comments[i].getFont(); //font of different comments	
+            		
+            writeStatic(Comments[i].getComment(),Comments[i].getLength(),Comments[i].getHeight());				//print comment on current position  
+            }        
             Comments[i].move(speed);				// minus the current position to the left
             }
             ctx.restore();           				//load the style back to text
@@ -509,11 +550,12 @@ function writeStatic(comment,width,height){
 }}
 
 function onCanvasClick(e) {
-  	console.log(getCursorPosition(e));  //Check which comment is clicked.
+  	//console.log(getCursorPosition(e));  //Check which comment is clicked.
   
     for (var i = startCommentIndex; i < endCommentIndex && i >= startCommentIndex; i ++){
 	if(Comments[i].checkClicked(getCursorPosition(e))==0){
 		//alert("Clicked "+ Comments[i].getComment());
+		if(checkBlocked(Comments[i].getID())== 0){
 		myPlayer.pause();
 		if(Comments[i].getLink() == ''){
 			alert("There is no link");
@@ -521,34 +563,26 @@ function onCanvasClick(e) {
 		var url = 'http://'+Comments[i].getLink();// url
 		var win = window.open(url, '_blank'); // change to get url when db done
 		win.focus();
-		}
+		}}
 	}				
 }
   }
   
-  /*
-function getCursorPosition(e) {
-  	var x;
-    var y;
-    if (e.pageX != undefined && e.pageY != undefined) {
-	x = e.pageX;
-	y = e.pageY;
-    }
-    else {
-	x = e.clientX + document.body.scrollLeft +
-            document.documentElement.scrollLeft;
-	y = e.clientY + document.body.scrollTop +
-            document.documentElement.scrollTop;
-    }
-    //x -= can.offsetLeft;
-    //y -= can.offsetTop;
-    x -= canvasx;
-    y -= canvasy;
-    
-    return [x,y];
-     }
+ 
+function checkBlocked(id) {
+var value = 0;
+//console.log("array length = "+block.length);
+for(var i =0; i <= block.length;i++){
+//console.log("i="+i);
+//console.log("block id = "+block[i]+"this comment id = "+id);
+if(block[i] == id){
 
-*/  
+	value = 1;
+}
+}
+return value;
+}
+
 function getCursorPosition(e) {
 	var rect = can.getBoundingClientRect();
     var x = e.clientX - rect.left;
