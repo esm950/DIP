@@ -8,12 +8,12 @@ background: url(http://www.thoinayweb.com/wp-content/uploads/2013/12/powerpoint-
 }
 #overlay {
   position: absolute; 
-  top: 55px; 
+  top: 40px; 
   color: #FFF; 
   text-align: center;
   font-size: 20px;
   background-color: rgba(221, 221, 221, 0);
-  width: 640px;
+  width: 580px;
   padding: 1px 0;
   z-index: 2147483647;
 }
@@ -225,7 +225,8 @@ fonts to show/hide properly.
 .vjs-default-skin .vjs-mute-control,
 .vjs-default-skin .vjs-volume-menu-button {
   cursor: pointer;
-  left: 27em;
+  /*float: right;*/
+  left: 31em; /*xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx*/
 }
 .vjs-default-skin .vjs-mute-control:before,
 .vjs-default-skin .vjs-volume-menu-button:before {
@@ -245,7 +246,8 @@ fonts to show/hide properly.
 }
 .vjs-default-skin .vjs-volume-control {
   width: 5em;
-  left: 36em;
+  /*float: right;*/
+  left: 40em; /*xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx*/
 }
 .vjs-default-skin .vjs-volume-bar {
   width: 5em;
@@ -255,7 +257,6 @@ fonts to show/hide properly.
 .vjs-default-skin .vjs-volume-menu-button .vjs-menu-content {
   height: 2.9em;
 }
-/* the blue bar location*/
 .vjs-default-skin .vjs-volume-level {
   position: absolute;
   top: 0;
@@ -266,7 +267,6 @@ fonts to show/hide properly.
   width: 100%;
   background: #66a8cc url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAGCAYAAADgzO9IAAAAP0lEQVQIHWWMAQoAIAgDR/QJ/Ub//04+w7ZICBwcOg5FZi5iBB82AGzixEglJrd4TVK5XUJpskSTEvpdFzX9AB2pGziSQcvAAAAAAElFTkSuQmCC) -50% 0 repeat;
 }
-/* the diamond dot on volume buttom*/
 .vjs-default-skin .vjs-volume-bar .vjs-volume-handle {
   width: 0.5em;
   height: 0.5em;
@@ -285,7 +285,8 @@ fonts to show/hide properly.
 }
 .vjs-default-skin .vjs-volume-menu-button .vjs-menu .vjs-menu-content {
   width: 6em;
-  left: -3.5em;
+  /*left: -4em;*/
+  left: -3.5em; /*xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx*/
 }
 /* Progress
 --------------------------------------------------------------------------------
@@ -417,6 +418,7 @@ fonts to show/hide properly.
 .vjs-default-skin .vjs-fullscreen-control {
   display: none;
   width: 3.8em;
+  cursor: pointer;
   float: right;
 }
 .vjs-default-skin .vjs-fullscreen-control:before {
@@ -647,9 +649,8 @@ easily in the skin designer. http://designer.videojs.com/
 --------------------------------------------------------------------------------
 */
 .vjs-default-skin .vjs-menu-button {
-  display: none;
   float: right;
-  /*cursor: pointer;*/
+  cursor: pointer;
 }
 .vjs-default-skin .vjs-menu {
   display: none;
@@ -672,7 +673,7 @@ easily in the skin designer. http://designer.videojs.com/
 }
 /* Button Pop-up Menu */
 .vjs-default-skin .vjs-menu-button .vjs-menu .vjs-menu-content {
-  display: none;
+  display: block;
   padding: 0;
   margin: 0;
   position: absolute;
@@ -694,7 +695,7 @@ easily in the skin designer. http://designer.videojs.com/
   box-shadow: -0.2em -0.2em 0.3em rgba(255, 255, 255, 0.2);
 }
 .vjs-default-skin .vjs-menu-button:hover .vjs-menu {
-  display: none;
+  display: block;
 }
 .vjs-default-skin .vjs-menu-button ul li {
   list-style: none;
@@ -734,19 +735,21 @@ easily in the skin designer. http://designer.videojs.com/
 }
 /* Subtitles Button */
 .vjs-default-skin .vjs-subtitles-button:before {
-  display: none;
+  display: none; /*xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx*/
   content: "\e00c";
 }
 /* Captions Button */
-.vjs-default-skin .vjs-captions-button: {
-  display: none;
+.vjs-default-skin .vjs-captions-button:before {
+  display: none; /*xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx*/
   content: "\e008";
 }
 /* Chapters Button */
 .vjs-default-skin .vjs-chapters-button:before {
+  display: none; /*xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx*/
   content: "\e00c";
 }
 .vjs-default-skin .vjs-chapters-button.vjs-menu-button .vjs-menu .vjs-menu-content {
+  display: none; /*xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx*/
   width: 24em;
   left: -12em;
 }
@@ -754,7 +757,6 @@ easily in the skin designer. http://designer.videojs.com/
 .vjs-default-skin .vjs-captions-button:focus .vjs-control-content:before,
 .vjs-default-skin .vjs-captions-button:hover .vjs-control-content:before {
   /* box-shadow */
-  
   -webkit-box-shadow: 0 0 1em #ffffff;
   -moz-box-shadow: 0 0 1em #ffffff;
   box-shadow: 0 0 1em #ffffff;
@@ -893,10 +895,10 @@ body.vjs-full-window {
   background-color: rgba(0, 0, 0, 0.5);
 }
 .video-js .vjs-subtitles {
-  color: #ffffff /*Subtitles are white*/ ;
+  color: #ffffff /* Subtitles are white */;
 }
 .video-js .vjs-captions {
-  color: #ffcc66  /*Captions are yellow*/ ;
+  color: #ffcc66 /* Captions are yellow */;
 }
 .vjs-tt-cue {
   display: block;
